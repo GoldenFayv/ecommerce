@@ -19,7 +19,3 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /
-          protocol: ftps
-          port: 21   # Use 21 if you prefer STARTTLS
-          timeout: 600  # Increase timeout (default is usually 30s)
-          passive: true
