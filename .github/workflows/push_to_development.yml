@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   web-deploy:
     name: 🎉 Deploy
@@ -11,10 +12,10 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v3
 
-      - name: 📂 Sync files
+      - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ftp-golden.alwaysdata.net
-          username: golden
-          password: Alwaysdata@2002
-          server-dir: /
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /www
