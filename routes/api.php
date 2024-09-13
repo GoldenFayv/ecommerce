@@ -1,16 +1,17 @@
 <?php
 
 // Import routes for API V1
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\User\UserController as ApiV1UserController;
 use App\Http\Controllers\Api\V1\Order\OrderController as ApiV1OrderController;
 use App\Http\Controllers\Api\V1\User\AuthController as ApiV1UserAuthController;
 use App\Http\Controllers\Api\V1\Product\ProductController as ApiV1ProductController;
-use App\Http\Controllers\Api\V1\Product\CategoryController as ApiV1CategoryController;
 
 // ADMIN Routes
-use App\Http\Controllers\ControlPanel\ApiV1\CouponController as ControlPanelCouponController;
+use App\Http\Controllers\Api\V1\Product\CategoryController as ApiV1CategoryController;
 use App\Http\Controllers\ControlPanel\ApiV1\AuthController as ControlPanelAuthController;
 use App\Http\Controllers\Api\V1\Product\SubCategoryController as ApiV1SubCategoryController;
+use App\Http\Controllers\ControlPanel\ApiV1\CouponController as ControlPanelCouponController;
 use App\Http\Controllers\ControlPanel\ApiV1\User\UserController as ControlPanelUserController;
 use App\Http\Controllers\ControlPanel\ApiV1\Order\OrderController as ControlPanelOrderController;
 use App\Http\Controllers\ControlPanel\ApiV1\Products\ProductController as ControlPanelProductController;
@@ -38,7 +39,7 @@ Route::prefix('v1')->group(function () {
     Route::post('user/request-activation', [ApiV1UserAuthController::class, 'sendActivateOtp']);
     Route::post('user/activate', [ApiV1UserAuthController::class, 'activateAccount']);
 
-    Route::middleware('auth:user')->group(function () {
+    Route::middleware('auth:user')->group(callback: function () {
         // Email Routes
         Route::prefix('email')->group(function () {
             Route::post('otp', [ApiV1UserAuthController::class, 'sendEmailOtp'])->name('api.email.otp');
@@ -48,8 +49,8 @@ Route::prefix('v1')->group(function () {
         // User Routes
         Route::prefix('user')->group(function () {
             Route::get('profile', [ApiV1UserController::class, 'getProfile'])
-                ->name('api.user.profile')
-                ->middleware('requires_recaptcha');
+                ->name('api.user.profile');
+                // ->middleware('requires_recaptcha');
             Route::post('update-profile', [ApiV1UserController::class, 'updateProfile'])
                 ->name('api.user.profile.update');
             Route::post('deactivate', [ApiV1UserAuthController::class, 'deactivateAccount'])

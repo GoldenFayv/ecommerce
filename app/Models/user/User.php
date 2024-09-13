@@ -20,19 +20,11 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'email',
-        'chat_id',
-        'username',
         'password',
         'last_name',
-        'is_active',
-        'deleted_at',
         'first_name',
-        'mobile_number',
-        'account_number',
-        'balance',
         'profile_picture',
-        'aws_connection_id',
-        'fcm_token'
+        'email_verified_at'
     ];
 
     /**
@@ -79,7 +71,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getNameAttribute()
     {
-        return $this->last_name . ', ' . $this->first_name;
+    return "{$this->last_name} {$this->first_name}";
     }
     public function notifications()
     {

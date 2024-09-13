@@ -19,12 +19,11 @@ class AuthController extends Controller
     {
 
         $request->validate([
-            'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|string|email|max:255|unique:users',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'mobile_number' => 'required|string|max:255',
-            'password' => 'required|string|min:8'
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8'
         ]);
         try {
             $user = $userService->createUser($request);
@@ -39,7 +38,7 @@ class AuthController extends Controller
 
             $code = $user->createOtp(Otp::EmailVerification);
             $this->sendMail($user->email, "E-Mail Verification", 'mails.email_verification', [
-                'username' => $user->first_name,
+                'name' => $user->first_name,
                 'code' => $code
             ]);
             return $this->successResponse("User Created", $result, 201);
@@ -54,26 +53,26 @@ class AuthController extends Controller
             'email' => 'required_without:username|string|email|max:255',
             'password' => 'required|string|min:8'
         ]);
-        
+
         try {
             /** @var User */
             $user = null;
             if (isset($request['email'])) {
 
-                $user = User::where('email', $request['email'])->where('deleted_at', null)->first();
+                $user = User::where('email', $request->email)->first();
                 if (!$user) {
                     return $this->failureResponse("Email Does not Exists", null, 404);
                 }
             } else {
-                $user = User::where('username', $request['username'])->where('deleted_at', null)->first();
+                $user = User::where('username', $request['username'])->first();
                 if (!$user) {
                     return $this->failureResponse("Username Does not Exists", null, 404);
                 }
             }
 
-            if ($user->is_active == 0) {
-                return $this->failureResponse("Account Deactivated", null, 400);
-            }
+            // if ($user->is_active == 0) {
+            //     return $this->failureResponse("Account Deactivated", null, 400);
+            // }
             if (!Hash::check($request['password'], $user->password)) {
                 return $this->failureResponse("Invalid Credentials", null, 400);
             }

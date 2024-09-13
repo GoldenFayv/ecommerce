@@ -13,20 +13,12 @@ return new class extends Migration {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->rememberToken();
-            $table->string('chat_id');
             $table->string('password');
             $table->string('last_name');
             $table->string('first_name');
-            $table->string('mobile_number');
-            $table->string('account_number');
-            $table->decimal('balance', 20)->default(0);
-            $table->string('profile_picture');
-            $table->text('fcm_token');
-            $table->text('aws_connection_id');
+            $table->string('profile_picture')->nullable();
+            $table->text('fcm_token')->nullable();
             $table->string('email')->unique();
-            $table->string('username')->unique();
-            $table->boolean('is_active')->default(1);
-            $table->timestamp("deleted_at")->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });

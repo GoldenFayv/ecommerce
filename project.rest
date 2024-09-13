@@ -1,0 +1,32 @@
+@localUrl = http://127.0.0.1:8000/api/v1/
+@bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNzI2MjM2NjM3LCJleHAiOjE3MjYyNDAyMzcsIm5iZiI6MTcyNjIzNjYzNywianRpIjoidXRwTUhHdml1bUJ5dE0ydSIsInN1YiI6IjMiLCJwcnYiOiJiOTEyNzk5NzhmMTFhYTdiYzU2NzA0ODdmZmYwMWUyMjgyNTNmZTQ4In0.HJAgXWa8-ecfD1cfSfWYJM16EaNjOHfiblOmNUg6W3Y
+
+### Register
+POST http://127.0.0.1:8000/api/v1/register
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "favour.e2002@gmail.com",
+    "password": "12345678",
+    "password_confirmation": "12345678",
+    "first_name": "Golden",
+    "last_name": "Eke"
+}
+
+### Login
+POST http://127.0.0.1:8000/api/v1/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "favour.e2002@gmail.com",
+    "password": "12345678"
+}
+
+### Get Profile
+GET  http://127.0.0.1:8000/api/v1/user/profile
+Accept: application/json
+Content-Type: application/application/json
+Authorization: {{bearer}}
+

@@ -1,6 +1,6 @@
 @extends('mails.base')
 @section('content')
-    <p style="margin-bottom: 10px;">Hi {{ $data['username'] }}</p>
+    <p style="margin-bottom: 10px;">Hi {{ $data['name'] }}</p>
     <p style="margin-bottom: 10px;">
         We are pleased to have you as a member of NKM Family.
         <br>

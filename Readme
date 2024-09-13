@@ -85,12 +85,12 @@
 
 _This Registers a User_
 
-**URL:** /api/v1/register  
+**URL:** /api/v1/register
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
+Content-Type: _application/json_
 Accept: _application/json_
 
 #### Parameters
@@ -139,12 +139,12 @@ Accept: _application/json_
 
 _This Logs a User in_
 
-**URL:** /api/v1/login  
+**URL:** /api/v1/login
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
+Content-Type: _application/json_
 Accept: _application/json_
 
 #### Parameters
@@ -179,13 +179,13 @@ Accept: _application/json_
 
 _This sends an OTP to the user email for verification_
 
-**URL:** /api/v1/email/otp  
+**URL:** /api/v1/email/otp
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -204,13 +204,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _This Verifies a user email_
 
-**URL:** /api/v1/email/verify  
+**URL:** /api/v1/email/verify
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Parameters
@@ -240,8 +240,8 @@ _This sends a password reset link to a user_
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Parameters
@@ -266,12 +266,12 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _This resets a user password_
 
-**URL:** /api/v1/reset-password  
+**URL:** /api/v1/reset-password
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
+Content-Type: _application/json_
 Accept: _application/json_
 
 #### Parameters
@@ -297,13 +297,13 @@ Accept: _application/json_
 
 _This returns a user profile details_
 
-**URL:** /api/v1/user/profile  
+**URL:** /api/v1/user/profile
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -335,8 +335,8 @@ _This updates a user profile details_
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Parameters
@@ -377,8 +377,8 @@ _This deactivates a user account_
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -402,7 +402,7 @@ _This sends an otp for account activation_
 
 #### Headers
 
-Content-Type: _application/json_  
+Content-Type: _application/json_
 Accept: _application/json_
 
 #### Parameters
@@ -439,7 +439,7 @@ _This sends an otp for account activation_
 
 #### Headers
 
-Content-Type: _application/json_  
+Content-Type: _application/json_
 Accept: _application/json_
 
 #### Response
@@ -463,8 +463,8 @@ _This sends an otp for account deletion_
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -494,7 +494,7 @@ _This deletes a user account_
 
 #### Headers
 
-Content-Type: _application/json_  
+Content-Type: _application/json_
 Accept: _application/json_
 
 #### Response
@@ -513,13 +513,13 @@ Accept: _application/json_
 
 _Retrieve all products_
 
-**URL:** /api/v1/product  
+**URL:** /api/v1/product
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -563,13 +563,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Retrieve a specific product by ID_
 
-**URL:** /api/v1/product/{id}  
+**URL:** /api/v1/product/{id}
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -611,13 +611,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Retrieve all categories_
 
-**URL:** /api/v1/category  
+**URL:** /api/v1/category
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -650,13 +650,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Retrieve a specific category by ID_
 
-**URL:** /api/v1/category/{id}  
+**URL:** /api/v1/category/{id}
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -687,13 +687,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Retrieve all subcategories_
 
-**URL:** /api/v1/subcategory  
+**URL:** /api/v1/subcategory
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -724,13 +724,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Retrieve a specific subcategory by ID_
 
-**URL:** /api/v1/subcategory/{id}  
+**URL:** /api/v1/subcategory/{id}
 **Method:** GET
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Response
@@ -759,13 +759,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Retrieve an order summary_
 
-**URL:** /api/v1/summary  
+**URL:** /api/v1/summary
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Parameters
@@ -829,13 +829,13 @@ Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 _Endpoint for placing an order_
 
-**URL:** /api/v1/order  
+**URL:** /api/v1/order
 **Method:** POST
 
 #### Headers
 
-Content-Type: _application/json_  
-Accept: _application/json_  
+Content-Type: _application/json_
+Accept: _application/json_
 Authorization: Bearer _bearer_token retrieved-from [Login](#login)_
 
 #### Parameters
