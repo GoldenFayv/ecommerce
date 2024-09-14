@@ -15,9 +15,9 @@ jobs:
       - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: ftp-golden.alwaysdata.net
+          server: ftp-insights.alwaysdata.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /home/golden/ecommerce/
+          server-dir: /home/insights/www/
           protocol: ftps
           port: 21
