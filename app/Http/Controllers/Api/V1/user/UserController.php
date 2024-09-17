@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Http\Controllers\Controller;
 use App\Models\user\User;
-use App\Services\UserService;
+use Illuminate\Support\Env;
 use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -37,6 +38,18 @@ class UserController extends Controller
     public function getProfile(UserService $userService)
     {
         $userDetails = $userService->getUserDetails();
-        return $this->successResponse("User Profile Retrieved", $userDetails);
+        return successResponse("User Profile Retrieved", $userDetails);
+    }
+
+    public function make_complaint(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required',
+            'message' => 'required',
+            'images' => 'required|array',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg'
+        ]);
+        $this->sendMail(Env::get('SUPPORT_EMAIL'), 'Complaint', 'mail.complaint', []);
+       return successResponse('');
     }
 }

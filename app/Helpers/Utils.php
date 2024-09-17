@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -23,3 +24,27 @@ function generateRef($length = 11, Model|string $model = null, $column = "refere
 
     return $reference;
 }
+function successResponse($message, $data = null, $status = 200)
+{
+    if (str_contains(strtolower($message), "created")) {
+        $status = 201;
+    }
+    return response()->json(
+        [
+            'status' => true,
+            'message' => $message,
+            'data' => $data
+        ],
+        $status
+    );
+}
+
+// function sendMail($email, $subject, $view, $data)
+// {
+//     try {
+//         //code...
+//         Mail::to($email)->send(new UserMail($subject, $data, $view));
+//     } catch (\Throwable $th) {
+//         $this->failureResponse('', null, 500, $th);
+//     }
+// }

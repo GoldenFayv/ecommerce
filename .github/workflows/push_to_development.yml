@@ -31,5 +31,4 @@ jobs:
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           script: |
             cd ./www/
-            php artisan migrate
             php artisan cache:clear
