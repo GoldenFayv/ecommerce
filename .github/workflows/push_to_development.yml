@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           source: "."
-          target: "/var/www/"
+          target: "./www/"
           rm: false
           overwrite: false
 
@@ -30,7 +30,6 @@ jobs:
           username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
           key: ${{ secrets.PRODUCTION_SSH_KEY }}
           script: |
-            cd /var/www/  # Navigate to the directory where the files were copied
-            # Add additional deployment steps such as migrations, cache clearing, etc.
+            cd ./www/
             php artisan migrate
             php artisan cache:clear
