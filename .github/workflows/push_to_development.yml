@@ -1,25 +1,36 @@
-name: 🚀 Deploy website on push
+name: Deploy
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: 🚚 Get latest code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v1
 
-      # - name: Install Latest OpenSSL
-      #   run: sudo apt-get install openssl
-
-      - name: 📂 Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: Copy repository contents via scp
+        uses: appleboy/scp-action@master
         with:
-          server: ftp-insights.alwaysdata.net
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ./www/
-          protocol: ftp
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          source: "."
+          target: "/var/www/"
+          rm: false
+          overwrite: false
+
+      - name: Executing remote command
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PRODUCTION_SSH_HOST }}
+          username: ${{ secrets.PRODUCTION_SSH_USERNAME }}
+          key: ${{ secrets.PRODUCTION_SSH_KEY }}
+          script: |
+            cd /var/www/  # Navigate to the directory where the files were copied
+            # Add additional deployment steps such as migrations, cache clearing, etc.
+            php artisan migrate
+            php artisan cache:clear
