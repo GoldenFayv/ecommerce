@@ -12,8 +12,8 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v3
 
-      - name: Install Latest OpenSSL
-        run: sudo apt-get install openssl
+      # - name: Install Latest OpenSSL
+      #   run: sudo apt-get install openssl
 
       - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -22,4 +22,3 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /home/insights/www/
-          protocol: ftps
