@@ -53,7 +53,7 @@ class User extends Authenticatable implements JWTSubject
             $expires_at = now()->addMinutes(10);
         }
 
-        $otp = substr(mt_rand(0000000, 99999999), 0, 6);
+        $otp = substr(mt_rand(10003401, 99999999), 0, 6);
         UserOtp::where('name', $name)->where('user_id', $this->id)->delete();
         $create = UserOtp::create([
             'user_id' => $this->id,

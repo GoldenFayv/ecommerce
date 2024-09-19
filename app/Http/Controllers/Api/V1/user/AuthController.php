@@ -111,7 +111,7 @@ class AuthController extends Controller
             }
 
             $this->sendMail($user->email, "E-Mail Verification", 'mails.email_verification', [
-                'username' => $user->first_name,
+                'name' => $user->first_name,
                 'code' => $code
             ]);
             return $this->successResponse("Email Verification OTP Sent", null);
@@ -138,10 +138,11 @@ class AuthController extends Controller
             $user->email_verified_at = now();
             $update = $user->save();
 
-            if ($update)
+            if ($update) {
                 return $this->successResponse("Email Successfully Verified");
-            else
+            } else {
                 return $this->failureResponse("Email Not Verified");
+            }
         } catch (Throwable $th) {
             return $this->failureResponse("Internal Server Error", null, 500, $th);
         }
