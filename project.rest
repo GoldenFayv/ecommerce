@@ -3,7 +3,7 @@
 @bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNzI2NjA2NjMyLCJleHAiOjE3MjY2MTAyMzIsIm5iZiI6MTcyNjYwNjYzMiwianRpIjoiMEd1RlhrWG53QnFiYjJwNyIsInN1YiI6IjMiLCJwcnYiOiJiOTEyNzk5NzhmMTFhYTdiYzU2NzA0ODdmZmYwMWUyMjgyNTNmZTQ4In0.W4iasnlXM1GC25XIVHPZmBTjuUPum1Lv9k8uqVcMrpk
 
 ### Register
-POST http://127.0.0.1:8000/api/v1/register
+POST {{liveUrl}}/register
 Accept: application/json
 Content-Type: application/json
 
