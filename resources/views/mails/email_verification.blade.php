@@ -1,13 +1,18 @@
 @extends('mails.base')
+
+@section('title', 'Verify Your Email')
+
+@section('email-title', 'Email Verification')
+{{-- @section('email-title')
+    {{ $data['email_title'] }}
+@endsection --}}
+
 @section('content')
-    <p style="margin-bottom: 10px;">Hi {{ $data['name'] }}</p>
-    <p style="margin-bottom: 10px;">
-        We are pleased to have you as a member of NKM Family.
-        <br>
-        Your Account has been successfully created, Just One Step to Go.
-        Use the code below to verify your email
+    <p>Hi {{ $data['name'] }},</p>
+    <p>
+        We're excited to have you in the NKM Family! Your account has been successfully created.
     </p>
-    <b style="margin-bottom: 10px;color: #6576ff">{{ $data['code'] }}</b>
-    <br>
-    <span>Note: This Codes Expires after 10 Minutes</span>
+    <p>Please use the code below to verify your email address:</p>
+    <h2 style="color: #6576ff;">{{ $data['code'] }}</h2>
+    <p><strong>Note:</strong> The code expires in 10 minutes.</p>
 @endsection

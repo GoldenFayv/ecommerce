@@ -41,3 +41,7 @@ Route::get('/logs/{action?}', function ($action = null) {
 
     return "Log file does not exist.";
 });
+
+Route::get('mail', function(){
+    return view('mails.email_verification');
+});

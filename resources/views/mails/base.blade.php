@@ -1,153 +1,119 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
-    xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="x-apple-disable-message-reformatting">
-    <title></title>
-
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,600" rel="stylesheet" type="text/css">
-    <!-- Web Font / @font-face : BEGIN -->
-    <!--[if mso]>
-        <style>
-            * {
-                font-family: 'Roboto', sans-serif !important;
-            }
-        </style>
-    <![endif]-->
-
-    <!--[if !mso]>
-        <link href="https://fonts.googleapis.com/css?family=Roboto:400,600" rel="stylesheet" type="text/css">
-    <![endif]-->
-
-    <!-- Web Font / @font-face : END -->
-
-    <!-- CSS Reset : BEGIN -->
-
+    <title>@yield('title', 'Email Notification')</title>
 
     <style>
-        /* What it does: Remove spaces around the email design added by some email clients. */
-        /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
-        html,
         body {
-            margin: 0 auto !important;
-            padding: 0 !important;
-            height: 100% !important;
-            width: 100% !important;
-            font-family: 'Roboto', sans-serif !important;
-            font-size: 14px;
-            margin-bottom: 10px;
-            line-height: 24px;
-            color: #8094ae;
-            font-weight: 400;
-        }
-
-        * {
-            -ms-text-size-adjust: 100%;
-            -webkit-text-size-adjust: 100%;
             margin: 0;
             padding: 0;
+            background-color: #f3f4f6;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            color: #3b3b3b;
         }
 
-        table,
-        td {
-            mso-table-lspace: 0pt !important;
-            mso-table-rspace: 0pt !important;
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
         }
 
-        table {
-            border-spacing: 0 !important;
-            border-collapse: collapse !important;
-            table-layout: fixed !important;
-            margin: 0 auto !important;
+        .email-header {
+            background-color: #6576ff;
+            padding: 30px;
+            text-align: center;
+            color: #ffffff;
         }
 
-        table table table {
-            table-layout: auto;
+        .email-header h1 {
+            font-size: 24px;
+            margin: 0;
+            font-weight: bold;
         }
 
-        a {
+        .email-body {
+            padding: 30px;
+            background-color: #ffffff;
+        }
+
+        .email-footer {
+            padding: 20px;
+            text-align: center;
+            background-color: #f9fafb;
+            color: #7d7d7d;
+            font-size: 12px;
+            border-top: 1px solid #e4e4e4;
+        }
+
+        .email-footer a {
+            color: #6576ff;
             text-decoration: none;
         }
 
-        img {
-            -ms-interpolation-mode: bicubic;
+        .social-links {
+            padding-top: 15px;
+        }
+
+        .social-links a {
+            margin: 0 5px;
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+            border-radius: 50%;
+            background-color: #f3f4f6;
+            text-align: center;
+            line-height: 40px;
+        }
+
+        .social-links img {
+            height: 20px;
         }
     </style>
-
 </head>
 
-<body width="100%"
-    style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f5f6fa;">
-    <center style="width: 100%; background-color: #f5f6fa;">
-        <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f6fa">
-            <tr>
-                <td style="padding: 40px 0;">
-                    <table style="width:100%;max-width:620px;margin:0 auto;">
-                        <tbody>
-                            <tr>
-                                <td style="text-align: center; padding-bottom:25px">
-                                    <a href="#"><img style="height: 40px"
-                                            src="https://www.gtcomnet.com/assets/img/logo.png" alt="logo"></a>
-                                    <p style="font-size: 14px; color: #6576ff; padding-top: 12px;">
-                                        NKM Web Template
-                                    </p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table style="width:100%;max-width:620px;margin:0 auto;background-color:#ffffff;">
-                        <tbody>
-                            <tr>
-                                <td style="padding: 30px 30px 20px">
-                                    <div style="background: #fff">
-                                        @yield('content')
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table style="width:100%;max-width:620px;margin:0 auto;">
-                        <tbody>
-                            <tr>
-                                <td style="text-align: center; padding:25px 20px 0;">
-                                    <p style="font-size: 13px;">Copyright © 2020 NKM. All rights reserved. <br>
-                                        Template Made By <a style="color: #6576ff; text-decoration:none;"
-                                            href="https://www.gtcomnet.com">Gtcomnet</a>.</p>
-                                    <ul style="margin: 10px -4px 0;padding: 0;">
-                                        <li style="display: inline-block; list-style: none; padding: 4px;"><a
-                                                style="display: inline-block; height: 30px; width:30px;border-radius: 50%; background-color: #ffffff"
-                                                href="#"><img style="width: 30px"
-                                                    src="{{ asset('assets/img/brand-b.png') }}" alt="brand"></a></li>
-                                        <li style="display: inline-block; list-style: none; padding: 4px;"><a
-                                                style="display: inline-block; height: 30px; width:30px;border-radius: 50%; background-color: #ffffff"
-                                                href="#"><img style="width: 30px"
-                                                    src="{{ asset('assets/img/brand-e.png') }}" alt="brand"></a></li>
-                                        <li style="display: inline-block; list-style: none; padding: 4px;"><a
-                                                style="display: inline-block; height: 30px; width:30px;border-radius: 50%; background-color: #ffffff"
-                                                href="#"><img style="width: 30px"
-                                                    src="{{ asset('assets/img/brand-d.png') }}" alt="brand"></a></li>
-                                        <li style="display: inline-block; list-style: none; padding: 4px;"><a
-                                                style="display: inline-block; height: 30px; width:30px;border-radius: 50%; background-color: #ffffff"
-                                                href="#"><img style="width: 30px"
-                                                    src="{{ asset('assets/img/brand-c.png') }}" alt="brand"></a></li>
-                                    </ul>
-                                    <p style="padding-top: 15px; font-size: 12px;">This email was sent to you as a
-                                        registered user of <a style="color: #6576ff; text-decoration:none;"
-                                            href="https://gtcomnet.com">gtcomnet.com</a>. To update your emails
-                                        preferences <a style="color: #6576ff; text-decoration:none;"
-                                            href="#">click here</a>.</p>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </td>
-            </tr>
-        </table>
-    </center>
+<body>
+    <div class="email-container">
+        <!-- Email Header -->
+        <div class="email-header">
+            <h1>@yield('email-title', 'Project Notification')</h1>
+        </div>
+
+        <!-- Email Body -->
+        <div class="email-body">
+            @yield('content')
+        </div>
+
+        <!-- Email Footer -->
+        <div class="email-footer">
+            <p>&copy; {{ now()->year }} Brand Name Family. All rights reserved.</p>
+            <p>Powered by <a href="#">Brand Name</a></p>
+
+            <!-- Social Links -->
+            <div class="social-links">
+                <a href="#" target="_blank">
+                    <img src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt="Facebook">
+                </a>
+                <a href="#" target="_blank">
+                    <img src="https://img.icons8.com/fluent/48/000000/instagram-new.png" alt="Instagram">
+                </a>
+                <a href="#" target="_blank">
+                    <img src="https://img.icons8.com/fluent/48/000000/twitter.png" alt="Twitter">
+                </a>
+                <a href="#" target="_blank">
+                    <img src="https://img.icons8.com/fluent/48/000000/linkedin.png" alt="LinkedIn">
+                </a>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
