@@ -41,7 +41,8 @@ class UserController extends Controller
 
         $this->sendMail($user->email, "Account Creation", 'mails.account_creation', [
             'name' => $user->first_name,
-            'password' => $validated['password']
+            'password' => $validated['password'],
+            'email' =>  $user->email,
         ]);
 
         return successResponse('User Successfully Created');
@@ -54,6 +55,7 @@ class UserController extends Controller
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId, // Allow updating if it's the same user's email
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
+            'isAdmin' => 'sometimes|boolean'
         ]);
 
         // Retrieve the user
@@ -74,22 +76,18 @@ class UserController extends Controller
             $user->last_name = $validated['last_name'];
         }
 
-        // Handle password update
-        if (isset($validated['password'])) {
-            $user->password = $validated['password'];  // Hash the new password if provided
+        if(isset($validated['isAdmin'])){
+            $user->isAdmin = $validated['isAdmin'];
         }
 
         // Save updated user data
         $user->save();
 
         // Optionally send email to notify user about account update
-        Mail::send('mails.account_updated', [
+        $this->sendMail($user->email, "Account Update", 'mails.account_update', [
             'name' => $user->first_name,
-            'email' => $user->email
-        ], function ($message) use ($user) {
-            $message->to($user->email)
-                ->subject('Account Updated');
-        });
+            'password' => $validated['password']
+        ]);
 
         return $this->successResponse("Updated");
     }

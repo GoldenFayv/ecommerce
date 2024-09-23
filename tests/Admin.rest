@@ -26,3 +26,9 @@ Content-Type: application/json
     "email": "favour.e2002@gmail.com",
     "password": "12345678"
 }
+
+### Register
+GET {{localUrl}}/admin/user
+Accept: application/json
+Content-Type: application/json
+Authorization: {{bearer}}
