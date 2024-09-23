@@ -11,7 +11,10 @@ use BenSampo\Enum\Enum;
  */
 final class ShippingMode extends Enum
 {
-    const OptionOne = 0;
-    const OptionTwo = 1;
-    const OptionThree = 2;
+    const AIR_CONSOLIDATION = 'Air Consolidation';
+    const SEA_FREIGHT = 'Sea Freight (LCL)';
+    const INLAND = 'Inland';
+    const DOOR_TO_AIRPORT = 'Door to Airport';
+    const DOOR_TO_SEAPORT = 'Door to Seaport';
+    const DOOR_TO_DOOR = 'Door to Door';
 }

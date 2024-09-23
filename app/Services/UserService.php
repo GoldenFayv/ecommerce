@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\user\User;
+use Illuminate\Support\Str;
 use App\Models\user\UserOtp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -36,6 +37,7 @@ class UserService
         $result["last_name"] = $user->last_name;
         $result["profile_picture"] = $user->profile_picture ? Storage::url('uploads/profile-picture/' . $user->profile_picture) : null;
         $result['email_verified'] = $user->email_verified_at ? true : false;
+        $result['isAdmin'] = $user->isAdmin ? true : false;
 
         $token ? $result["bearer_token"] = $token : null;
         return $result;
@@ -67,6 +69,8 @@ class UserService
         $user->first_name = $payload['first_name'];
         $user->last_name = $payload['last_name'];
         $user->password = $payload['password'];
+        $user->created_by = $payload['created_by'] ?? null;
+        $user->isAdmin = $payload['isAdmin'] ?? false;
         $user->save();
 
         return $user;

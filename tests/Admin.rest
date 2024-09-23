@@ -1,0 +1,28 @@
+@localUrl = http://127.0.0.1:8000/api/v1
+@liveUrl = https://insights.alwaysdata.net/api/v1
+@bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3YxL3JlZ2lzdGVyIiwiaWF0IjoxNzI3MTI1MjM0LCJleHAiOjE3MjcxMjg4MzQsIm5iZiI6MTcyNzEyNTIzNCwianRpIjoiSml2VElydTZPYm1kVlEwNyIsInN1YiI6IjEiLCJwcnYiOiJiOTEyNzk5NzhmMTFhYTdiYzU2NzA0ODdmZmYwMWUyMjgyNTNmZTQ4In0.O9uMX_quWlY_Ny_jt1fTwaYH3AIG4y-IicaWaMwSj10
+
+### Register
+POST {{localUrl}}/admin/user
+Accept: application/json
+Content-Type: application/json
+Authorization: {{bearer}}
+
+{
+    "email": "golden.f2002@gmail.com",
+    "password": "12345678",
+    "password_confirmation": "12345678",
+    "first_name": "Golden",
+    "last_name": "Eke",
+    "isAdmin": false
+}
+
+### Login
+POST {{localUrl}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "favour.e2002@gmail.com",
+    "password": "12345678"
+}

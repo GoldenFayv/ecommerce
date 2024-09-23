@@ -18,15 +18,15 @@ class AuthController extends Controller
     public function register(UserService $userService, GeneralService $generalService, Request $request)
     {
 
-        $request->validate([
-            'email' => 'required|string|email|max:255|unique:users',
+        $validated = $request->validate([
+            'email' => 'required|string|email|max:255|unique:users,email',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required|string|min:8'
         ]);
         try {
-            $user = $userService->createUser($request);
+            $user = $userService->createUser($validated);
 
             $credentials = [
                 "email" => $user->email,

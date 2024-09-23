@@ -2,12 +2,14 @@
 
 // Import routes for API V1
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\Admin\UserController;
+use App\Http\Controllers\Api\V1\User\ShipmentController;
 use App\Http\Controllers\Api\V1\User\UserController as ApiV1UserController;
 use App\Http\Controllers\Api\V1\Order\OrderController as ApiV1OrderController;
-use App\Http\Controllers\Api\V1\User\AuthController as ApiV1UserAuthController;
-use App\Http\Controllers\Api\V1\Product\ProductController as ApiV1ProductController;
 
 // ADMIN Routes
+use App\Http\Controllers\Api\V1\User\AuthController as ApiV1UserAuthController;
+use App\Http\Controllers\Api\V1\Product\ProductController as ApiV1ProductController;
 use App\Http\Controllers\Api\V1\Product\CategoryController as ApiV1CategoryController;
 use App\Http\Controllers\ControlPanel\ApiV1\AuthController as ControlPanelAuthController;
 use App\Http\Controllers\Api\V1\Product\SubCategoryController as ApiV1SubCategoryController;
@@ -47,30 +49,31 @@ Route::prefix('v1')->group(function () {
         });
 
         // User Routes
-        Route::prefix('user')->group(function () {
-            Route::get('profile', [ApiV1UserController::class, 'getProfile'])
-                ->name('api.user.profile');
-                // ->middleware('requires_recaptcha');
-            Route::post('update-profile', [ApiV1UserController::class, 'updateProfile'])
-                ->name('api.user.profile.update');
-            Route::post('deactivate', [ApiV1UserAuthController::class, 'deactivateAccount'])
-                ->name('api.user.deactivate');
-            Route::post('request-delete', [ApiV1UserAuthController::class, 'requestDelete'])
-                ->name('api.user.request.delete');
-            Route::post('delete', [ApiV1UserAuthController::class, 'deleteAccount'])
-                ->name('api.user.delete');
+        Route::group([], function () {
+            Route::get('profile', [ApiV1UserController::class, 'getProfile'])->name('api.user.profile');
+            // ->middleware('requires_recaptcha');
+
+            Route::prefix('shipment')->group(function () {
+                Route::post('', [ShipmentController::class, 'create_shipment']);
+                Route::get('', [ShipmentController::class, 'shipments']);
+            });
+
+
+
+            Route::post('update-profile', [ApiV1UserController::class, 'updateProfile'])->name('api.user.profile.update');
+
+            Route::prefix('admin')->group(function () {
+                Route::prefix('user')->group(function () {
+                    Route::post('', [UserController::class, 'createUser']);
+                    Route::patch('{userId}', [UserController::class, 'updateUser']);
+                    Route::get('', [UserController::class, 'listUsers']);
+                    Route::delete('{userId}', [UserController::class, 'DeleteUser']);
+                });
+            });
         });
 
         // Product Routes
-        Route::apiResource('product', ApiV1ProductController::class);
-        Route::apiResource('category', ApiV1CategoryController::class);
-        Route::apiResource('subcategory', ApiV1SubCategoryController::class);
 
-        // Order Routes
-        Route::prefix('order')->group(function () {
-            Route::apiResource('', ApiV1OrderController::class)->parameter('', 'orderId');
-            Route::post('summary', [ApiV1OrderController::class, 'summary']);
-        });
     });
     /**
      * For Routes that requires reCAPTCHA use this middleware "requires_recaptcha"

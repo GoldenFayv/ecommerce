@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/shipment.php';
 
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Model;

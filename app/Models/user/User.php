@@ -3,6 +3,8 @@
 namespace App\Models\User;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Models\Shipment;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -24,7 +26,9 @@ class User extends Authenticatable implements JWTSubject
         'last_name',
         'first_name',
         'profile_picture',
-        'email_verified_at'
+        'email_verified_at',
+        'isAdmin',
+        'created_by'
     ];
 
     /**
@@ -46,6 +50,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // public function getNameAttribute(){
+    //     return $this->first_name . ' ' . $this->last_name;
+    // }
 
     public function createOtp($name, $expires_at = null)
     {
@@ -80,6 +88,11 @@ class User extends Authenticatable implements JWTSubject
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function shipment()
+    {
+        return $this->hasMany(Shipment::class, 'user_id');
     }
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

@@ -18,12 +18,8 @@ class Admin extends Authenticatable implements JWTSubject
         'last_name',
         'email',
         'profile_picture',
-        'deleted_at',
         'last_login',
         'is_active',
-        'admin_role_id',
-        'connection_id',
-        'chat_id',
         'password'
     ];
 
