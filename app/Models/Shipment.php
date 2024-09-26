@@ -21,7 +21,8 @@ class Shipment extends Model
         'shipping_method',
         'tracking_service',
         'signature_required',
-        'user_id'
+        'user_id',
+        'status'
     ];
 
     protected $casts = ['tracking_service' => 'boolean', 'signature_required' => 'boolean'];

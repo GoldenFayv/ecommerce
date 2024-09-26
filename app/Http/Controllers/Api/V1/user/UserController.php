@@ -50,6 +50,6 @@ class UserController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg'
         ]);
         $this->sendMail(Env::get('SUPPORT_EMAIL'), 'Complaint', 'mail.complaint', []);
-       return successResponse('');
+       return $this->successResponse('');
     }
 }

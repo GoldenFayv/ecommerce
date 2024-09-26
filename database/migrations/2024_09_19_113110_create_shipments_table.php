@@ -17,6 +17,7 @@ return new class extends Migration
             $table->datetime('shipment_date');
             $table->enum('mode_of_shipment', ['Air Consolidation', 'Sea Freight (LCL)', 'Inland', 'Door to Airport', 'Door to Seaport', 'Door to Door']);
             $table->enum('priority_level', ['Normal', 'High']);
+            $table->enum('status', ['Approved', 'Pending', 'Rejected']);
             $table->enum('cargo_description', ['Box', 'Envelope', 'Pallet', 'Container']);
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('carrier', ['FedEx', 'UPS', 'DHL']);
