@@ -16,7 +16,7 @@ trait ShipmentTrait
     {
         $shipmentData = [
             'id' => $shipment->id,
-            'approved' => $shipment->status,
+            'status' => $shipment->status,
             'shipment_reference' => $shipment->shipment_reference,
             'shipment_date' => $shipment->shipment_date,
             'mode_of_shipment' => $shipment->mode_of_shipment,
