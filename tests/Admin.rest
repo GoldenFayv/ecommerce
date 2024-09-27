@@ -1,9 +1,9 @@
 @localUrl = http://127.0.0.1:8000/api/v1
 @liveUrl = https://insights.alwaysdata.net/api/v1
-@bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3YxL3JlZ2lzdGVyIiwiaWF0IjoxNzI3MTI1MjM0LCJleHAiOjE3MjcxMjg4MzQsIm5iZiI6MTcyNzEyNTIzNCwianRpIjoiSml2VElydTZPYm1kVlEwNyIsInN1YiI6IjEiLCJwcnYiOiJiOTEyNzk5NzhmMTFhYTdiYzU2NzA0ODdmZmYwMWUyMjgyNTNmZTQ4In0.O9uMX_quWlY_Ny_jt1fTwaYH3AIG4y-IicaWaMwSj10
+@bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNzI3NDYzNDUyLCJleHAiOjE3Mjc0NjcwNTIsIm5iZiI6MTcyNzQ2MzQ1MiwianRpIjoialVHWTdKbG91RE9kcHN2WCIsInN1YiI6IjEiLCJwcnYiOiJiOTEyNzk5NzhmMTFhYTdiYzU2NzA0ODdmZmYwMWUyMjgyNTNmZTQ4In0.FShnNe31KH_3-UFH04Xy7EtGvTTSWl6Hhg17w2JvY2I
 
 ### Register
-POST {{localUrl}}/admin/user
+POST {{liveUrl}}/admin/user
 Accept: application/json
 Content-Type: application/json
 Authorization: {{bearer}}
@@ -32,3 +32,13 @@ GET {{localUrl}}/admin/user
 Accept: application/json
 Content-Type: application/json
 Authorization: {{bearer}}
+
+###
+GET {{localUrl}}/shipment?status=Approved
+Accept: application/json
+Content-Type: application/json
+Authorization: {{bearer}}
+
+# {
+#     "status": "Approved"
+# }
