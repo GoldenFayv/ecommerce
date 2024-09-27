@@ -94,6 +94,7 @@ class ShipmentController extends Controller
         $request->validate([
             'status' => ['nullable', Rule::in(ShipmentStatus::getValues())]
         ]);
+        logger("", [$request->status]);
 
         // Get the shipments based on the user's role and request status
         $shipments = Shipment::when(!$this->user->isAdmin, function ($query) {
