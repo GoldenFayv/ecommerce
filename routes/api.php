@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\Order\OrderController as ApiV1OrderController;
 
 // ADMIN Routes
 use App\Http\Controllers\Api\V1\User\AuthController as ApiV1UserAuthController;
+use App\Http\Controllers\Api\V1\Admin\ShipmentController as AdminShipmentController;
 use App\Http\Controllers\Api\V1\Product\ProductController as ApiV1ProductController;
 use App\Http\Controllers\Api\V1\Product\CategoryController as ApiV1CategoryController;
 use App\Http\Controllers\ControlPanel\ApiV1\AuthController as ControlPanelAuthController;
@@ -54,6 +55,7 @@ Route::prefix('v1')->group(function () {
             // ->middleware('requires_recaptcha');
 
             Route::prefix('shipment')->group(function () {
+                Route::patch('cancel/{shipmentId}', [ShipmentController::class, 'cancelShipment']);
                 Route::post('', [ShipmentController::class, 'create_shipment']);
                 Route::get('', [ShipmentController::class, 'shipments']);
             });
@@ -68,6 +70,11 @@ Route::prefix('v1')->group(function () {
                     Route::patch('{userId}', [UserController::class, 'updateUser']);
                     Route::get('', [UserController::class, 'listUsers']);
                     Route::delete('{userId}', [UserController::class, 'DeleteUser']);
+
+                    Route::prefix('shipment')->group(function () {
+                        Route::patch('approve/{shipmentId}', [AdminShipmentController::class, 'approveShipment']);
+                        Route::patch('reject/{shipmentId}', [AdminShipmentController::class, 'rejectShipment']);
+                    });
                 });
             });
         });

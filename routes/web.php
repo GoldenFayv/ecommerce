@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,10 @@ Route::get('/logs/{action?}', function ($action = null) {
     return "Log file does not exist.";
 });
 
-Route::get('mail', function(){
-    return view('mails.email_verification');
+// Route::get('mail', function(){
+//     return view('mails.email_verification');
+// });
+
+Route::get('db/update/123', function(){
+    DB::statement("ALTER TABLE `shipments` CHANGE `status` `status` enum('Approved','Pending','Rejected','Cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Pending' ;");
 });

@@ -32,11 +32,29 @@ class ShipmentController extends Controller
         $shipment = Shipment::findOrFail($shipmentId);
 
         if($shipment->status == ShipmentStatus::APPROVED()){
-            $shipment->status = ShipmentStatus::REJECTED();
+            return $this->successResponse("Shipment Already approved");
         }
-        else{
+        $shipment->status = ShipmentStatus::APPROVED();
+        $shipment->save();
 
+        return $this->successResponse('Shipment Approved');
+    }
+
+    public function rejectShipment($shipmentId, Request $request)
+    {
+        $request->validate([
+            'reason' => 'nullable'
+        ]);
+
+        $shipment = Shipment::findOrFail($shipmentId);
+
+        if($shipment->status == ShipmentStatus::REJECTED()){
+            return $this->successResponse("Shipment Already rejected");
         }
+        $shipment->status = ShipmentStatus::REJECTED();
+        $shipment->save();
+
+        return $this->successResponse('Shipment rejected');
     }
 
 }

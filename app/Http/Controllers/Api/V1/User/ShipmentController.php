@@ -109,4 +109,18 @@ class ShipmentController extends Controller
         // Map through the shipments and get details
         return $this->successResponse('Shipments', $shipments->map(fn($shipment) => $this->getShipmentDetails($shipment)));
     }
+
+    public function cancelShipment($shipmentId)
+    {
+        $shipment = Shipment::where(['id' => $shipmentId, 'user_id' => $this->user->id])->firstOrFail();
+
+        if($shipment->status == ShipmentStatus::CANCELLED){
+            die();
+        }
+
+        $shipment->status = ShipmentStatus::CANCELLED();
+        $shipment->save();
+
+        return $this->successResponse('Cancelled');
+    }
 }
