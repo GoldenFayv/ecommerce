@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\traits\ShipmentTrait;
 use Throwable;
 use App\Models\Shipment;
+use Illuminate\Http\Request;
+use App\Enums\ShipmentStatus;
+use App\traits\ShipmentTrait;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -86,12 +89,21 @@ class ShipmentController extends Controller
         }
     }
 
-    public function shipments()
+    public function shipments(Request $request)
     {
+        $request->validate([
+            'status' => ['nullable', Rule::in(ShipmentStatus::getValues())]
+        ]);
+
+        // Get the shipments based on the user's role and request status
         $shipments = Shipment::when(!$this->user->isAdmin, function ($query) {
             // If the user is not an admin, filter by user_id
             return $query->where('user_id', $this->user->id);
-        })->get();
+        })
+            ->when($this->user->isAdmin && $request->status, function ($query) use ($request) {
+                // If the user is an admin and status is provided, filter by status
+                return $query->where('status', $request->status);
+            })->get();
 
         // Map through the shipments and get details
         return $this->successResponse('Shipments', $shipments->map(fn($shipment) => $this->getShipmentDetails($shipment)));
