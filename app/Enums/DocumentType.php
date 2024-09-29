@@ -11,10 +11,10 @@ use BenSampo\Enum\Enum;
  */
 final class DocumentType extends Enum
 {
-    const INVOICE = 'invoice';
-    const PACKING_LIST = 'packing_list';
-    const PICTURES = 'pictures';
-    const COA = 'coa';
-    const MSD = 'msds';
-    const OTHER = 'other';
+    const INVOICE = 'Invoice';
+    const PACKING_LIST = 'Packing_list';
+    const PICTURES = 'Pictures';
+    const COA = 'COA';
+    const MSD = 'MSDS';
+    const OTHER = 'Other';
 }

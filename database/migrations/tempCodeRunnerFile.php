@@ -1,2 +1,0 @@
-<?php
-courier_id
