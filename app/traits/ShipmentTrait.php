@@ -9,6 +9,7 @@ use App\Models\Package;
 use App\Models\Discount;
 use App\Models\Shipment;
 use App\Enums\AddressType;
+use Carbon\Carbon;
 use App\Exceptions\CustomException;
 
 trait ShipmentTrait
@@ -136,5 +137,45 @@ trait ShipmentTrait
         // Total cost including base cost, weight charge, insurance, and discount
 
         return $totalCostAfterDiscount ?? $totalCost;
+    }
+
+
+    public function calculateDeliveryDate(int $processingDays, int $shippingDays, $cutoffTime = null, $holidays = [])
+    {
+        $now = Carbon::now();
+
+        // Check if current time exceeds cutoff time, if set
+        if ($cutoffTime && $now->format('H:i') > $cutoffTime) {
+            // Start processing the next business day
+            $now->addDay();
+        }
+
+        // Add processing days
+        $deliveryDate = self::addBusinessDays($now, $processingDays, $holidays);
+
+        // Add shipping days
+        $deliveryDate = self::addBusinessDays($deliveryDate, $shippingDays, $holidays);
+
+        return $deliveryDate->format('Y-m-d');
+    }
+
+    /**
+     * Add business days to a date, skipping weekends and holidays.
+     *
+     * @param Carbon $date
+     * @param int $days
+     * @param array $holidays
+     * @return Carbon
+     */
+    private static function addBusinessDays(Carbon $date, int $days, $holidays = [])
+    {
+        while ($days > 0) {
+            $date->addDay();
+            if (!$date->isWeekend() && !in_array($date->format('Y-m-d'), $holidays)) {
+                $days--;
+            }
+        }
+
+        return $date;
     }
 }

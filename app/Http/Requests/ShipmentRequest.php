@@ -83,8 +83,8 @@ class ShipmentRequest extends FormRequest
             'addresses.*.special_instructions' => 'nullable',
             'addresses.*.country' => 'required',
             'addresses.*.state' => 'required',
-            'addresses.*.lga' => 'required',
-            'addresses.*.city' => 'nullable',
+            'addresses.*.lga' => 'nullable',
+            'addresses.*.city' => 'required',
             'addresses.*.street_address' => 'required',
             'addresses.*.postal_code' => 'nullable',
 

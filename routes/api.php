@@ -1,6 +1,8 @@
 <?php
 
 // Import routes for API V1
+
+use App\Http\Controllers\Api\V1\Admin\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Admin\UserController;
 use App\Http\Controllers\Api\V1\User\ShipmentController;
@@ -71,10 +73,14 @@ Route::prefix('v1')->group(function () {
                     Route::get('', [UserController::class, 'listUsers']);
                     Route::delete('{userId}', [UserController::class, 'DeleteUser']);
                 });
-                
+
                 Route::prefix('shipment')->group(function () {
                     Route::patch('approve/{shipmentId}', [AdminShipmentController::class, 'approveShipment']);
                     Route::patch('reject/{shipmentId}', [AdminShipmentController::class, 'rejectShipment']);
+                });
+
+                Route::prefix('config')->group(function(){
+                    Route::post('', [AdminController::class, 'addConfig']);
                 });
             });
         });

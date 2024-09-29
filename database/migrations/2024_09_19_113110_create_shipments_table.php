@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status', ['Approved', 'Pending', 'Rejected']);
             $table->enum('cargo_description', ['Box', 'Envelope', 'Pallet', 'Container']);
             $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->enum('carrier', ['FedEx', 'UPS', 'DHL']);
+            $table->enum('carrier', ['FedEx', 'UPS', 'DHL'])->nullable();
             $table->enum('shipping_method', ['Land', 'Air', 'Ocean', 'Rail']);
             $table->boolean('tracking_service')->default(false);
             $table->boolean('signature_required')->default(false);

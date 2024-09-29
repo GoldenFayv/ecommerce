@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1\User;
 
 use Throwable;
+use App\Models\Config;
+use App\Models\Courier;
 use App\Models\Shipment;
 use Illuminate\Http\Request;
 use App\Enums\ShipmentStatus;
@@ -19,18 +21,26 @@ class ShipmentController extends Controller
     use ShipmentTrait;
 
     public $user;
+    public $config;
+
 
     public function __construct()
     {
         if (Auth::check()) {
             $this->user = Auth::user();
         }
+
+        $this->config = Config::get();
     }
     public function create_shipment(ShipmentRequest $shipmentRequest)
     {
         $validatedData = $shipmentRequest->validated(); // Ensure validation is performed
         try {
             DB::transaction(function () use ($validatedData) {
+
+                $courier = Courier::find($validatedData['courier_id']);
+
+                $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
 
                 // Create shipment
                 $shipment = Shipment::create([
@@ -82,8 +92,13 @@ class ShipmentController extends Controller
                     'coupon_code' => $validatedData['billing']['coupon'],
                 ]);
 
-                return $this->successResponse("Shipment Successfully Created");
-            }, 2);
+                $shipmentDetails = $this->getshipmentDetails($shipment);
+
+                $shipmentDetails['estimatedDeliveryDate'] = $estimatedDeliveryDate;
+                $shipmentDetails['total_cost'] = 7000;
+
+                return $this->successResponse("Shipment Successfully Created", $shipmentDetails);
+            }, 1);
         } catch (Throwable $th) {
             Log::debug("Caught error", [$th]);
             return $this->failureResponse("Internal Server Error", $th->getMessage());
