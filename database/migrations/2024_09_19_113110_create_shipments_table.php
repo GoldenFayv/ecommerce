@@ -24,6 +24,7 @@ return new class extends Migration
             $table->enum('shipping_method', ['Land', 'Air', 'Ocean', 'Rail']);
             $table->boolean('tracking_service')->default(false);
             $table->boolean('signature_required')->default(false);
+            $table->foreignId('courier_id')->constrained('couriers')->OnDelete('set null')->cascadeOnUpdate();
             $table->timestamps();
         });
     }

@@ -16,9 +16,9 @@ return new class extends Migration
             $table->integer('number_of_packages');
             $table->string('package_description');
             $table->float('weight');
-            $table->float('length');
-            $table->float('width');
-            $table->float('height');
+            $table->float('length')->nullable();
+            $table->float('width')->nullable();
+            $table->float('height')->nullable();
             $table->float('shipment_value');
             $table->boolean('insurance')->default(false);
             $table->string('shipment_contents');

@@ -37,7 +37,8 @@ class ShipmentController extends Controller
                     'shipment_date' => $validatedData['shipment_date'],
                     'shipment_mode' => $validatedData['shipment_mode'],
                     'priority_level' => $validatedData['priority_level'],
-                    'user_id' => Auth::user()->id
+                    'user_id' => Auth::user()->id,
+                    'courier_id' => $validatedData['courier_id']
                 ]);
 
                 // Create package associated with the shipment

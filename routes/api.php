@@ -71,6 +71,7 @@ Route::prefix('v1')->group(function () {
                     Route::get('', [UserController::class, 'listUsers']);
                     Route::delete('{userId}', [UserController::class, 'DeleteUser']);
                 });
+                
                 Route::prefix('shipment')->group(function () {
                     Route::patch('approve/{shipmentId}', [AdminShipmentController::class, 'approveShipment']);
                     Route::patch('reject/{shipmentId}', [AdminShipmentController::class, 'rejectShipment']);

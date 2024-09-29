@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\AddressType;
 use Carbon\Carbon;
+use App\Enums\Couriers;
+use App\Enums\AddressType;
 use App\Enums\ShippingMode;
 use App\Enums\PaymentMethod;
 use App\Enums\PriorityLevel;
@@ -32,6 +33,7 @@ class ShipmentRequest extends FormRequest
             'shipment_date' => ['required', 'after:' . Carbon::now()->addWeek(), 'date'],
             'shipment_mode' => ['required', Rule::in(ShippingMode::getValues())],
             'priority_level' => ['required', Rule::in(PriorityLevel::getValues())],
+            'courier_id' => ['required', 'exists:couriers,id'],
 
 
             'package_description' => 'required',
@@ -40,7 +42,7 @@ class ShipmentRequest extends FormRequest
             'length' => 'nullable|numeric',
             'width' => 'nullable|numeric',
             'height' => 'nullable|numeric',
-            'shipment_value' => ['digits_between:1,5', 'required'],
+            'shipment_value' => ['required'],
             'insurance' => 'nullable|boolean',
             'shipment_content' => 'nullable',
             'fragile' => 'boolean|required',

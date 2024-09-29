@@ -49,4 +49,15 @@ Route::get('/logs/{action?}', function ($action = null) {
 
 Route::get('db/update/123', function(){
     DB::statement("ALTER TABLE `shipments` CHANGE `status` `status` enum('Approved','Pending','Rejected','Cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'Pending' ;");
+    DB::statement("ALTER TABLE `shipments` ADD COLUMN `courier_id` BIGINT UNSIGNED");
+    DB::statement("ALTER TABLE `shipments` ADD FOREIGN KEY (`courier_id`) REFERENCES `couriers`(`id`) ON UPDATE CASCADE ON DELETE SET NULL;");
+    DB::statement("CREATE TABLE `couriers` (
+    `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+    `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+    `max_delivery_days` int NOT NULL,
+    `cutoff_time` time DEFAULT NULL,
+    `created_at` timestamp NULL DEFAULT NULL,
+    `updated_at` timestamp NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci");
 });

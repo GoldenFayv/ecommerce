@@ -22,7 +22,8 @@ class Shipment extends Model
         'tracking_service',
         'signature_required',
         'user_id',
-        'status'
+        'status',
+        'courier_id'
     ];
 
     protected $casts = ['tracking_service' => 'boolean', 'signature_required' => 'boolean'];
@@ -55,5 +56,10 @@ class Shipment extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function courier()
+    {
+        return $this->belongsTo(Courier::class, 'courier_id');
     }
 }

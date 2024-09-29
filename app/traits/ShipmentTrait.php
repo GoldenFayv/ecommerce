@@ -6,6 +6,7 @@ use Exception;
 use App\Models\Address;
 use App\Models\Billing;
 use App\Models\Package;
+use App\Models\Discount;
 use App\Models\Shipment;
 use App\Enums\AddressType;
 use App\Exceptions\CustomException;
@@ -102,5 +103,38 @@ trait ShipmentTrait
             'preferred_datetime' => $address->preferred_datetime,
             'special_instructions' => $address->special_instructions,
         ];
+    }
+
+    public function getDeliveryDays($shippingMethod, $priorityLevel)
+    {
+        $deliveryDays = [
+            'air' => ['standard' => 5, 'priority' => 2],
+            'sea' => ['standard' => 20, 'priority' => 15],
+            'land' => ['standard' => 10, 'priority' => 5]
+        ];
+
+        return $deliveryDays[$shippingMethod][$priorityLevel] ?? 0; // Default to 0 if not found
+    }
+
+    /**
+     * Calculate total cost based on shipment details
+     */
+    protected function calculateTotalCost($data)
+    {
+        $baseCost = 100; // Example base cost, can be fetched from database or config
+        $weightCharge = $data['weight'] * 2; // Example charge per weight unit
+        $insuranceCost = $data['insurance'] ? 50 : 0; // Example insurance cost
+
+        $totalCost = $baseCost + $weightCharge + $insuranceCost;
+
+        if(!empty($data['billing']['coupon'])){
+            $discount_code = Discount::where('code', $data['billing']['coupon'])->first();
+
+            $totalCostAfterDiscount = $discount_code->getDiscountedValue($totalCost);
+        }
+
+        // Total cost including base cost, weight charge, insurance, and discount
+
+        return $totalCostAfterDiscount ?? $totalCost;
     }
 }
