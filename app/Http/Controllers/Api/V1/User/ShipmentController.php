@@ -31,7 +31,7 @@ class ShipmentController extends Controller
             $this->user = Auth::user();
         }
 
-        $this->config = Config::get();
+        // $this->config = Config::get();
     }
     public function create_shipment(ShipmentRequest $shipmentRequest)
     {
