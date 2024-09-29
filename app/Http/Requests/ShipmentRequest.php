@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Carbon\Carbon;
 use App\Enums\Couriers;
 use App\Enums\AddressType;
+use App\Enums\DocumentType;
 use App\Enums\ShippingMode;
 use App\Enums\PaymentMethod;
 use App\Enums\PriorityLevel;
@@ -98,6 +99,11 @@ class ShipmentRequest extends FormRequest
             // 'billing.street_address' => ['required'],
             'billing.billing_address' => "required",
             'billing.coupon' => ['nullable'],
+
+            'international' => ['boolean', 'nullable'],
+            'document_type' => ['required_if:international,true', Rule::in(DocumentType::getValues())],
+            'files' => ['required_if:international,true', 'array'],
+            'files.*' => ['required', 'file']
 
 
         ];

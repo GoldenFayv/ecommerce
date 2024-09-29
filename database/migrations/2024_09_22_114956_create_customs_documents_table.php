@@ -22,7 +22,7 @@ return new class extends Migration
                 'msds',
                 'other'
             ])->comment('Type of document');
-            $table->string('file_path')->comment('Path to the uploaded document');
+            $table->json('file_name');
             $table->timestamps();
         });
     }

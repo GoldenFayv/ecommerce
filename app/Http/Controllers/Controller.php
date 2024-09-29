@@ -71,8 +71,8 @@ class Controller extends BaseController
     public function uploadFile(UploadedFile $image, $path)
     {
         $filename = rand(00000000, 99999999) . '.' . $image->getClientOriginalExtension();
-        $destination = $path . $filename;
-        $image->storeAs($destination);
+        // $destination = $path . $filename;
+        // $image->storeAs($destination);
 
         return $filename;
     }
@@ -85,4 +85,3 @@ enum Otp: string
     case AccountDeletion = 'account_deletion';
     case EmailVerification = 'email_verification';
 }
-;

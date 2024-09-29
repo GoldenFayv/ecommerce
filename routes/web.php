@@ -48,5 +48,5 @@ Route::get('/logs/{action?}', function ($action = null) {
 // });
 
 Route::get('db/update/123', function () {
-   DB::statement("ALTER TABLE `addresses` CHANGE `lga` `lga` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL;");
+   DB::statement("ALTER TABLE `customs_documents` CHANGE `file_path` `file_name` JSON NOT NULL COMMENT 'Path to the uploaded document' ;");
 });

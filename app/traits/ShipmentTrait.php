@@ -3,19 +3,26 @@
 namespace App\traits;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\Address;
 use App\Models\Billing;
+use App\Models\Courier;
 use App\Models\Package;
 use App\Models\Discount;
 use App\Models\Shipment;
 use App\Enums\AddressType;
-use Carbon\Carbon;
 use App\Exceptions\CustomException;
+use App\Models\CustomsDocument;
 
 trait ShipmentTrait
 {
     public function getshipmentDetails(Shipment $shipment)
     {
+        $courier = Courier::find($shipment->courier_id);
+
+        $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
+
+
         $shipmentData = [
             'id' => $shipment->id,
             'status' => $shipment->status,
@@ -37,7 +44,13 @@ trait ShipmentTrait
 
             'origin_address' => $this->getAddressDetails($shipment->id, AddressType::ORIGIN()),
 
-            'destination_address' => $this->getAddressDetails($shipment->id, AddressType::DESTINATION())
+            'destination_address' => $this->getAddressDetails($shipment->id, AddressType::DESTINATION()),
+
+            'custom_documents' => $this->getCustomDocuments($shipment->id),
+
+            'estimatedDeliveryDate' => $estimatedDeliveryDate,
+
+            'total_cost' => 7000
         ];
 
         return $shipmentData;
@@ -106,6 +119,20 @@ trait ShipmentTrait
         ];
     }
 
+    private function getCustomDocuments(int $shipmentId)
+    {
+        $customDoument = CustomsDocument::where('shipment_id', $shipmentId)->first();
+
+        if (!$customDoument) {
+            return [];
+        }
+
+        return [
+            'document_type' => $customDoument->document_type,
+            'files' => $customDoument->files
+        ];
+    }
+
     public function getDeliveryDays($shippingMethod, $priorityLevel)
     {
         $deliveryDays = [
@@ -128,7 +155,7 @@ trait ShipmentTrait
 
         $totalCost = $baseCost + $weightCharge + $insuranceCost;
 
-        if(!empty($data['billing']['coupon'])){
+        if (!empty($data['billing']['coupon'])) {
             $discount_code = Discount::where('code', $data['billing']['coupon'])->first();
 
             $totalCostAfterDiscount = $discount_code->getDiscountedValue($totalCost);

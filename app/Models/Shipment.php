@@ -53,6 +53,11 @@ class Shipment extends Model
         return $this->hasOne(Billing::class, 'shipment_id');
     }
 
+    public function customDocument()
+    {
+        return $this->hasOne(CustomsDocument::class, 'shipment_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

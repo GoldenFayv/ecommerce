@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
+use App\Enums\FileUploadPaths;
 use Throwable;
 use App\Models\Config;
 use App\Models\Courier;
@@ -37,10 +38,6 @@ class ShipmentController extends Controller
         $validatedData = $shipmentRequest->validated(); // Ensure validation is performed
         try {
             DB::transaction(function () use ($validatedData) {
-
-                $courier = Courier::find($validatedData['courier_id']);
-
-                $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
 
                 // Create shipment
                 $shipment = Shipment::create([
@@ -78,7 +75,7 @@ class ShipmentController extends Controller
                         'special_instructions' => $address['special_instructions'],
                         'country' => $address['country'],
                         'state' => $address['state'],
-                        'lga' => $address['lga'],
+                        'lga' => $address['lga'] ?? null,
                         'city' => $address['city'],
                         'street_address' => $address['street_address'],
                         'postal_code' => $address['postal_code'],
@@ -92,11 +89,23 @@ class ShipmentController extends Controller
                     'coupon_code' => $validatedData['billing']['coupon'],
                 ]);
 
+                if (isset($validatedData['international']) && $validatedData['international']) {
+                    // Store uploaded files and get file names
+                    $fileNames = collect($validatedData['files'])->map(function ($file) {
+                        return $this->uploadFile($file, FileUploadPaths::CUSTOM_DOCUMENT);
+                    });
+
+                    // Create the custom document with the file names
+                    $shipment->customDocument()->create([
+                        'document_type' => $validatedData['document_type'],
+                        'file_name' => $fileNames->toArray(), // Convert to array for database storage
+                    ]);
+                }
+
+
                 $shipmentDetails = $this->getshipmentDetails($shipment);
 
-                $shipmentDetails['estimatedDeliveryDate'] = $estimatedDeliveryDate;
-                $shipmentDetails['total_cost'] = 7000;
-
+                logger("", [$shipmentDetails]);
                 return $this->successResponse("Shipment Successfully Created", $shipmentDetails);
             }, 1);
         } catch (Throwable $th) {
@@ -130,7 +139,7 @@ class ShipmentController extends Controller
     {
         $shipment = Shipment::where(['id' => $shipmentId, 'user_id' => $this->user->id])->firstOrFail();
 
-        if($shipment->status == ShipmentStatus::CANCELLED){
+        if ($shipment->status == ShipmentStatus::CANCELLED) {
             die();
         }
 
