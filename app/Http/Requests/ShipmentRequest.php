@@ -80,7 +80,7 @@ class ShipmentRequest extends FormRequest
             'addresses.*.name' => 'required',
             'addresses.*.email' => 'required|email',
             'addresses.*.mobile_number' => ['required', 'regex:/^\d+$/'],
-            'addresses.*.preferred_datetime' => 'nullable|date',
+            'addresses.*.preferred_datetime' => ['nullable'],
             'addresses.*.special_instructions' => 'nullable',
             'addresses.*.country' => 'required',
             'addresses.*.state' => 'required',
