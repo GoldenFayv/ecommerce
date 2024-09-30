@@ -17,6 +17,7 @@ class Discount extends Model
     {
         $discount_percent = $this->discount_percent/100;
         $discount_value = $discount_percent * $total_amount;
+        logger($discount_value);
         return $total_amount - $discount_value;
     }
 }

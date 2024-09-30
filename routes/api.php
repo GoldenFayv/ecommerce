@@ -59,6 +59,7 @@ Route::prefix('v1')->group(function () {
             Route::prefix('shipment')->group(function () {
                 Route::patch('cancel/{shipmentId}', [ShipmentController::class, 'cancelShipment']);
                 Route::post('', [ShipmentController::class, 'create_shipment']);
+                Route::post('confirm', [ShipmentController::class, 'confirmShipment']);
                 Route::get('', [ShipmentController::class, 'shipments']);
             });
 

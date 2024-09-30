@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Enums\FileUploadPaths;
 use Throwable;
 use App\Models\Config;
 use App\Models\Courier;
@@ -10,11 +9,13 @@ use App\Models\Shipment;
 use Illuminate\Http\Request;
 use App\Enums\ShipmentStatus;
 use App\traits\ShipmentTrait;
+use App\Enums\FileUploadPaths;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\ShipmentRequest;
 
 class ShipmentController extends Controller
@@ -33,16 +34,45 @@ class ShipmentController extends Controller
 
         // $this->config = Config::get();
     }
+
+
     public function create_shipment(ShipmentRequest $shipmentRequest)
     {
         $validatedData = $shipmentRequest->validated(); // Ensure validation is performed
-        logger("", [$validatedData]);
+
         try {
-            DB::transaction(function () use ($validatedData) {
+            // Store the validated data in the cache
+            $cacheKey = 'shipment_' . Auth::user()->id;  // Generate a unique cache key for each user
+            Cache::put($cacheKey, $validatedData, now()->addMinutes(30)); // Store in cache for 30 minutes
+
+            // Prepare shipment summary for user confirmation
+            $courier = Courier::find($validatedData['courier_id']);
+
+            $shipmentSummary = [
+                'estimatedDeliveryDate' => $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time),
+                'total_cost' => $this->calculateTotalCost($validatedData)
+            ];
+            return $this->successResponse("Review Shipment Details", $shipmentSummary);
+        } catch (Throwable $th) {
+            Log::debug("Caught error", [$th]);
+            return $this->failureResponse("Internal Server Error", $th->getMessage());
+        }
+    }
+
+    public function confirmShipment(Request $request)
+    {
+        $cacheKey = 'shipment_' . Auth::user()->id;
+        $validatedData = Cache::get($cacheKey);
+
+        if (!$validatedData) {
+            return $this->failureResponse("No shipment data found. Please start the shipment process again.");
+        }
+
+        try {
+            DB::transaction(function () use ($validatedData, $cacheKey) {
 
                 // Create shipment
                 $shipment = Shipment::create([
-                    'shipment_date' => $validatedData['shipment_date'],
                     'shipment_mode' => $validatedData['shipment_mode'],
                     'priority_level' => $validatedData['priority_level'],
                     'user_id' => Auth::user()->id,
@@ -53,7 +83,7 @@ class ShipmentController extends Controller
                 $shipment->package()->create([
                     'package_description' => $validatedData['package_description'],
                     'number_of_packages' => $validatedData['number_of_packages'],
-                    'weight' => $validatedData['weight'], // Fixed typo: 'Weight' should be 'weight'
+                    'weight' => $validatedData['weight'],
                     'length' => $validatedData['length'] ?? null,
                     'width' => $validatedData['width'] ?? null,
                     'height' => $validatedData['height'] ?? null,
@@ -104,9 +134,10 @@ class ShipmentController extends Controller
                 }
 
 
-                $shipmentDetails = $this->getshipmentDetails($shipment);
+                // Remove the cached data after saving
+                Cache::forget($cacheKey);
 
-                logger("", [$shipmentDetails]);
+                $shipmentDetails = $this->getshipmentDetails($shipment);
                 return $this->successResponse("Shipment Successfully Created", $shipmentDetails);
             }, 1);
         } catch (Throwable $th) {
@@ -114,6 +145,7 @@ class ShipmentController extends Controller
             return $this->failureResponse("Internal Server Error", $th->getMessage());
         }
     }
+
 
     public function shipments(Request $request)
     {

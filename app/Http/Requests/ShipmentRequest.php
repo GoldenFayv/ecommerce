@@ -31,7 +31,7 @@ class ShipmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'shipment_date' => ['required', 'after:' . Carbon::now()->addWeek(), 'date'],
+            // 'shipment_date' => ['required', 'after:' . Carbon::now()->addWeek(), 'date'],
             'shipment_mode' => ['required', Rule::in(ShippingMode::getValues())],
             'priority_level' => ['required', Rule::in(PriorityLevel::getValues())],
             'courier_id' => ['required', 'exists:couriers,id'],

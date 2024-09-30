@@ -22,7 +22,7 @@ trait ShipmentTrait
 
         $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
 
-
+        $package = $this->getPackageDetails($shipment->id);
         $shipmentData = [
             'id' => $shipment->id,
             'status' => $shipment->status,
@@ -32,13 +32,14 @@ trait ShipmentTrait
             'priority_level' => $shipment->priority_level,
             'cargo_description' => $shipment->cargo_description,
             'carrier' => $shipment->carrier,
+            'courier' => $shipment->courier->name,
             'shipping_method' => $shipment->shipping_method,
             'tracking_service' => $shipment->tracking_service,
             'signature_required' => $shipment->signature_required,
             'user_id' => $shipment->user_id,
             'user' => $shipment->user->name,
 
-            'package' => $this->getPackageDetails($shipment->id),
+            'package' => $package,
 
             'billing' => $this->getBillingDetails($shipment->id),
 
@@ -50,7 +51,7 @@ trait ShipmentTrait
 
             'estimatedDeliveryDate' => $estimatedDeliveryDate,
 
-            'total_cost' => 7000
+            'total_cost' => $this->calculateTotalCost($package)
         ];
 
         return $shipmentData;
@@ -157,8 +158,9 @@ trait ShipmentTrait
 
         if (!empty($data['billing']['coupon'])) {
             $discount_code = Discount::where('code', $data['billing']['coupon'])->first();
-
-            $totalCostAfterDiscount = $discount_code->getDiscountedValue($totalCost);
+            if (!empty($discount_code)) {
+                $totalCostAfterDiscount = $discount_code->getDiscountedValue($totalCost);
+            }
         }
 
         // Total cost including base cost, weight charge, insurance, and discount

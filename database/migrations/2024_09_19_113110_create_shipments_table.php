@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
             $table->string('shipment_reference')->unique();
-            $table->datetime('shipment_date');
             $table->enum('mode_of_shipment', ['Air Consolidation', 'Sea Freight (LCL)', 'Inland', 'Door to Airport', 'Door to Seaport', 'Door to Door']);
             $table->enum('priority_level', ['Normal', 'High']);
             $table->enum('status', ['Approved', 'Pending', 'Rejected']);
