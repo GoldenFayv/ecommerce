@@ -35,7 +35,6 @@ class ShipmentController extends Controller
         // $this->config = Config::get();
     }
 
-
     public function create_shipment(ShipmentRequest $shipmentRequest)
     {
         $validatedData = $shipmentRequest->validated(); // Ensure validation is performed
@@ -43,7 +42,7 @@ class ShipmentController extends Controller
         try {
             // Store the validated data in the cache
             $cacheKey = 'shipment_' . Auth::user()->id;  // Generate a unique cache key for each user
-            Cache::put($cacheKey, $validatedData, now()->addMinutes(30)); // Store in cache for 30 minutes
+            Cache::put($cacheKey, $validatedData, now()->addMinutes(10)); // Store in cache for 30 minutes
 
             // Prepare shipment summary for user confirmation
             $courier = Courier::find($validatedData['courier_id']);
@@ -145,7 +144,6 @@ class ShipmentController extends Controller
             return $this->failureResponse("Internal Server Error", $th->getMessage());
         }
     }
-
 
     public function shipments(Request $request)
     {

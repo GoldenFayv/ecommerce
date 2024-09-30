@@ -27,7 +27,7 @@ trait ShipmentTrait
             'id' => $shipment->id,
             'status' => $shipment->status,
             'shipment_reference' => $shipment->shipment_reference,
-            'shipment_date' => $shipment->shipment_date,
+            'shipment_date' => $shipment->created_at->format('Y-m-d'),
             'mode_of_shipment' => $shipment->mode_of_shipment,
             'priority_level' => $shipment->priority_level,
             'cargo_description' => $shipment->cargo_description,
@@ -47,7 +47,7 @@ trait ShipmentTrait
 
             'destination_address' => $this->getAddressDetails($shipment->id, AddressType::DESTINATION()),
 
-            'custom_documents' => $this->getCustomDocuments($shipment->id),
+            'custom_documents' => $this->getCustomDocuments($shipment->id) ?? null,
 
             'estimatedDeliveryDate' => $estimatedDeliveryDate,
 
