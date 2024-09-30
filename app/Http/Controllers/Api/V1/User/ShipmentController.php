@@ -36,6 +36,7 @@ class ShipmentController extends Controller
     public function create_shipment(ShipmentRequest $shipmentRequest)
     {
         $validatedData = $shipmentRequest->validated(); // Ensure validation is performed
+        logger("", [$validatedData]);
         try {
             DB::transaction(function () use ($validatedData) {
 
