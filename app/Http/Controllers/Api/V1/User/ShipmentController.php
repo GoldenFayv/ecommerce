@@ -51,7 +51,7 @@ class ShipmentController extends Controller
                 'estimatedDeliveryDate' => $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time),
                 'total_cost' => $this->calculateTotalCost($validatedData)
             ];
-            return $this->successResponse("Review Shipment Details", $shipmentSummary);
+            return $this->successResponse("Review Shipment Details");
         } catch (Throwable $th) {
             Log::debug("Caught error", [$th]);
             return $this->failureResponse("Internal Server Error", $th->getMessage());
