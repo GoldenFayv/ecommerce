@@ -34,6 +34,7 @@ class UserService
         $result["id"] = $user->id;
         $result["email"] = $user->email;
         $result["first_name"] = $user->first_name;
+        $result["mobile_number"] = $user->mobile_number ?? null;
         $result["last_name"] = $user->last_name;
         $result["profile_picture"] = $user->profile_picture ? Storage::url('uploads/profile-picture/' . $user->profile_picture) : null;
         $result['email_verified'] = $user->email_verified_at ? true : false;
@@ -69,6 +70,7 @@ class UserService
         $user->first_name = $payload['first_name'];
         $user->last_name = $payload['last_name'];
         $user->password = $payload['password'];
+        $user->mobile_number = $payload['mobile_number'];
         $user->created_by = $payload['created_by'] ?? null;
         $user->isAdmin = $payload['isAdmin'] ?? false;
         $user->save();

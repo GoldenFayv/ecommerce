@@ -23,7 +23,8 @@ class AuthController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required|string|min:8'
+            'password_confirmation' => 'required|string|min:8',
+            'mobile_number' => 'required|interger'
         ]);
         try {
             $user = $userService->createUser($validated);

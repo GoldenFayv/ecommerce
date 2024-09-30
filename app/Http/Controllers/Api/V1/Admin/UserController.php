@@ -32,6 +32,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'mobile_number' => 'required',
             'isAdmin' => 'required|boolean',
             // 'admin_role_id' => ['required_if:isAdmin,'.true, 'exists:admin_roles,id']
         ]);
@@ -55,7 +56,8 @@ class UserController extends Controller
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId, // Allow updating if it's the same user's email
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
-            'isAdmin' => 'sometimes|boolean'
+            'isAdmin' => 'sometimes|boolean',
+            'mobile_number' => 'sometimes'
         ]);
 
         // Retrieve the user
@@ -78,6 +80,9 @@ class UserController extends Controller
 
         if(isset($validated['isAdmin'])){
             $user->isAdmin = $validated['isAdmin'];
+        }
+        if(isset($validated['mobile_number'])){
+            $user->mobile_number = $validated['mobile_number'];
         }
 
         // Save updated user data

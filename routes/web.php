@@ -48,5 +48,5 @@ Route::get('/logs/{action?}', function ($action = null) {
 // });
 
 Route::get('db/update/123', function () {
-   DB::statement("ALTER TABLE `customs_documents` CHANGE `file_path` `file_name` JSON NOT NULL COMMENT 'Path to the uploaded document' ;");
+   DB::statement("ALTER TABLE `users` ADD COLUMN `mobile_number` VARCHAR(255)");
 });
