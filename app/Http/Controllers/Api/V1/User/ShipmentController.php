@@ -53,9 +53,9 @@ class ShipmentController extends Controller
                     'package_description' => $validatedData['package_description'],
                     'number_of_packages' => $validatedData['number_of_packages'],
                     'weight' => $validatedData['weight'], // Fixed typo: 'Weight' should be 'weight'
-                    'length' => $validatedData['length'],
-                    'width' => $validatedData['width'],
-                    'height' => $validatedData['height'],
+                    'length' => $validatedData['length'] ?? null,
+                    'width' => $validatedData['width'] ?? null,
+                    'height' => $validatedData['height'] ?? null,
                     'shipment_value' => $validatedData['shipment_value'],
                     'insurance' => $validatedData['insurance'],
                     'shipment_contents' => $validatedData['shipment_content'],
