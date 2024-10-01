@@ -136,7 +136,7 @@ class ShipmentController extends Controller
                 // Remove the cached data after saving
                 Cache::forget($cacheKey);
 
-                $shipmentDetails = $this->getshipmentDetails($shipment);
+                // $shipmentDetails = $this->getshipmentDetails($shipment);
                 return $this->successResponse("Shipment Successfully Created");
             }, 1);
         } catch (Throwable $th) {

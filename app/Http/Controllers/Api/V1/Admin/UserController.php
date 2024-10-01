@@ -32,7 +32,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'mobile_number' => 'required',
+            'mobile_number' => ['required', 'regex:/^\d+$/'],
             'isAdmin' => 'required|boolean',
             // 'admin_role_id' => ['required_if:isAdmin,'.true, 'exists:admin_roles,id']
         ]);
@@ -57,7 +57,7 @@ class UserController extends Controller
             'first_name' => 'sometimes|string|max:255',
             'last_name' => 'sometimes|string|max:255',
             'isAdmin' => 'sometimes|boolean',
-            'mobile_number' => 'sometimes'
+            'mobile_number' => 'sometimes|regex:/^\d+$/'
         ]);
 
         // Retrieve the user
