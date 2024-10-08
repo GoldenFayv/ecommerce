@@ -60,6 +60,14 @@ Route::prefix('v1')->group(function () {
                 Route::patch('cancel/{shipmentId}', [ShipmentController::class, 'cancelShipment']);
                 Route::post('', [ShipmentController::class, 'create_shipment']);
                 Route::post('confirm', [ShipmentController::class, 'confirmShipment']);
+                // routes/web.php
+
+                // Route to initiate update and generate summary
+                Route::patch('{shipmentId}', [ShipmentController::class, 'update_shipment']);
+
+                // Route to confirm and save the update
+                Route::patch('confirm/{shipmentId}', [ShipmentController::class, 'confirmUpdateShipment']);
+
                 Route::get('', [ShipmentController::class, 'shipments']);
             });
 
@@ -80,7 +88,7 @@ Route::prefix('v1')->group(function () {
                     Route::patch('reject/{shipmentId}', [AdminShipmentController::class, 'rejectShipment']);
                 });
 
-                Route::prefix('config')->group(function(){
+                Route::prefix('config')->group(function () {
                     Route::post('', [AdminController::class, 'addConfig']);
                 });
             });

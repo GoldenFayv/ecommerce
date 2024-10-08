@@ -37,8 +37,11 @@ trait ShipmentTrait
             'tracking_service' => $shipment->tracking_service,
             'signature_required' => $shipment->signature_required,
             'user_id' => $shipment->user_id,
-            'user' => $shipment->user->name,
+            'user' => $shipment->user_name ?? $shipment->user->name,
+            'email' => $shipment->email ?? $shipment->user->email,
+            'mobile_number' => $shipment->mobile_number ?? $shipment->user->mobile_number,
 
+            
             'package' => $package,
 
             'billing' => $this->getBillingDetails($shipment->id),

@@ -18,12 +18,15 @@ return new class extends Migration
             $table->enum('priority_level', ['Normal', 'High']);
             $table->enum('status', ['Approved', 'Pending', 'Rejected']);
             $table->enum('cargo_description', ['Box', 'Envelope', 'Pallet', 'Container']);
-            $table->foreignId('user_id')->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->enum('carrier', ['FedEx', 'UPS', 'DHL'])->nullable();
             $table->enum('shipping_method', ['Land', 'Air', 'Ocean', 'Rail']);
             $table->boolean('tracking_service')->default(false);
             $table->boolean('signature_required')->default(false);
             $table->foreignId('courier_id')->constrained('couriers')->OnDelete('set null')->cascadeOnUpdate();
+            $table->string('user_name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('mobile_number')->nullable();
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\NotAdmin;
 use Carbon\Carbon;
 use App\Enums\Couriers;
 use App\Enums\AddressType;
@@ -12,6 +13,7 @@ use App\Enums\PriorityLevel;
 use App\Enums\ShippingMethod;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ShipmentRequest extends FormRequest
 {
@@ -30,11 +32,20 @@ class ShipmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $user = Auth::user();
+
         return [
             // 'shipment_date' => ['required', 'after:' . Carbon::now()->addWeek(), 'date'],
             'shipment_mode' => ['required', Rule::in(ShippingMode::getValues())],
             'priority_level' => ['required', Rule::in(PriorityLevel::getValues())],
             'courier_id' => ['required', 'exists:couriers,id'],
+            'user_name' => $user->isAdmin ? ['required_with:email,mobile_number'] : ['nullable'],
+            'email' => $user->isAdmin ? ['required_with:user_name', 'email'] : ['nullable', 'email'],
+            'mobile_number' => $user->isAdmin ? ['required_with:user_name', 'regex:/^\d{11,15}$/'] : ['nullable', 'regex:/^\d{11,15}$/'],
+            'user_id' => $user->isAdmin
+                ? ['required_without:user_name', new NotAdmin]  // Required for admins, validated with custom rule
+                : ['nullable'],
+
 
 
             'package_description' => 'required',
@@ -48,32 +59,6 @@ class ShipmentRequest extends FormRequest
             'shipment_content' => 'nullable',
             'fragile' => 'boolean|required',
             'hazardous' => 'required|boolean',
-
-            // 'origin_address' => 'required',
-            // 'origin_address.sender_name' => 'required',
-            // 'origin_address.sender_email' => 'required|email',
-            // 'origin_address.sender_number' => ['required', 'regex:/^\d+$/'],
-            // 'origin_address.pickup_date_time' => 'date|nullable',
-            // 'origin_address.pickup_instruction' => 'nullable',
-            // 'origin_address.country' => 'required',
-            // 'origin_address.state' => 'required',
-            // 'origin_address.lga' => 'required',
-            // 'origin_address.city' => 'nullable',
-            // 'origin_address.pickup_address' => 'required',
-            // 'origin_address.postal_code' => 'nullable',
-
-            // 'destination_address' => 'required',
-            // 'destination_address.sender_name' => 'required',
-            // 'destination_address.sender_email' => 'required|email',
-            // 'destination_address.sender_number' => ['required', 'regex:/^\d+$/'],
-            // 'destination_address.pickup_date_time' => 'date|nullable',
-            // 'destination_address.pickup_instruction' => 'nullable',
-            // 'destination_address.country' => 'required',
-            // 'destination_address.state' => 'required',
-            // 'destination_address.lga' => 'required',
-            // 'destination_address.city' => 'nullable',
-            // 'destination_address.pickup_address' => 'required',
-            // 'destination_address.postal_code' => 'nullable',
 
             'addresses' => 'required|array',
             'addresses.*.type' => ['required', Rule::in(AddressType::getValues())], // differentiates origin and destination

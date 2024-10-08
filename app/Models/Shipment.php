@@ -23,7 +23,10 @@ class Shipment extends Model
         'signature_required',
         'user_id',
         'status',
-        'courier_id'
+        'courier_id',
+        'email',
+        'user_name',
+        'mobile_number'
     ];
 
     protected $casts = ['tracking_service' => 'boolean', 'signature_required' => 'boolean'];

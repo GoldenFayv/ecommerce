@@ -1,29 +1,30 @@
 @localUrl = http://127.0.0.1:8000/api/v1
 @liveUrl = https://insights.alwaysdata.net/api/v1
-@bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2luc2lnaHRzLmFsd2F5c2RhdGEubmV0L2FwaS92MS9sb2dpbiIsImlhdCI6MTcyNzQ2NDA2MCwiZXhwIjoxNzI3NDY3NjYwLCJuYmYiOjE3Mjc0NjQwNjAsImp0aSI6IkJ5bFRqbFBXNDVVMHJCUmwiLCJzdWIiOiIxIiwicHJ2IjoiYjkxMjc5OTc4ZjExYWE3YmM1NjcwNDg3ZmZmMDFlMjI4MjUzZmU0OCJ9.1TCnwCxnAPUToxuqUQhi4E7vrsox7kraCeVRzuJCCJQ
+@bearer=Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL3YxL2xvZ2luIiwiaWF0IjoxNzI3NzkyMDMxLCJleHAiOjE3Mjc3OTU2MzEsIm5iZiI6MTcyNzc5MjAzMSwianRpIjoiV00xRWppb2FDV3Q5ZlNPRyIsInN1YiI6IjEiLCJwcnYiOiJiOTEyNzk5NzhmMTFhYTdiYzU2NzA0ODdmZmYwMWUyMjgyNTNmZTQ4In0.q0YzoHwvDmqEr7QDu9VFrZd6791NfqcFH-3A2rjDyWY
 
 ### Register
-POST {{liveUrl}}/admin/user
+POST {{localUrl}}/admin/user
 Accept: application/json
 Content-Type: application/json
 Authorization: {{bearer}}
 
 {
-    "email": "golden.f2002@gmail.com",
+    "email": "golden.f002@gmail.com",
     "password": "12345678",
     "password_confirmation": "12345678",
     "first_name": "Golden",
     "last_name": "Eke",
-    "isAdmin": false
+    "isAdmin": false,
+    "mobile_number": 1
 }
 
 ### Login
-POST {{liveUrl}}/login
+POST {{localUrl}}/login
 Accept: application/json
 Content-Type: application/json
 
 {
-    "email": "favour@gmail.com",
+    "email": "favour.e2002@gmail.com",
     "password": "12345678"
 }
 

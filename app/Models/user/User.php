@@ -80,7 +80,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function getNameAttribute()
     {
-    return "{$this->last_name} {$this->first_name}";
+        return "{$this->last_name} {$this->first_name}";
     }
     public function notifications()
     {
