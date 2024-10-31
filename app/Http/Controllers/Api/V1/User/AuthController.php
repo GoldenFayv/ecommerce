@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api\V1\User;
 
 use Throwable;
-use App\Models\User\User;
+use App\Models\User;
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Otp;
 use App\Services\UserService;
+use Illuminate\Validation\Rule;
 use App\Services\GeneralService;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,8 +28,10 @@ class AuthController extends Controller
             'last_name' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required|string|min:8',
-            'mobile_number' => ['required', 'regex:/^\d+$/']
+            'mobile_number' => ['required', 'regex:/^\d+$/'],
+            'type' => ["required", Rule::in(UserType::getValues())]
         ]);
+        DB::beginTransaction();
         try {
             $user = $userService->createUser($validated);
 
@@ -34,7 +40,7 @@ class AuthController extends Controller
                 "password" => $request['password'],
             ];
             $token = Auth::attempt($credentials);
-
+            // logger($token); die;
             $result = $userService->getUserDetails($user->id, $token);
 
             $code = $user->createOtp(Otp::EmailVerification);
@@ -42,8 +48,13 @@ class AuthController extends Controller
                 'name' => $user->first_name,
                 'code' => $code
             ]);
+            DB::commit();
             return $this->successResponse("User Created", $result, 201);
         } catch (Throwable $th) {
+            DB::rollback();
+            if($th instanceof CustomException){
+                return $this->failureResponse($th->getMessage(), null, $th->getCode());
+            }
             return $this->failureResponse("Internal Server Error", null, 500, $th);
         }
     }
@@ -83,6 +94,7 @@ class AuthController extends Controller
                 "password" => $request['password'],
             ];
             $token = Auth::attempt($credentials);
+
             if (!$token) {
                 return response()->json([
                     'status' => 'error',
@@ -94,6 +106,9 @@ class AuthController extends Controller
 
             return $this->successResponse("User Logged in Successfully", $result);
         } catch (Throwable $th) {
+            if($th instanceof CustomException){
+                return $this->failureResponse($th->getMessage(), null, $th->getCode());
+            }
             return $this->failureResponse("Internal Server Error", null, 500, $th);
         }
     }

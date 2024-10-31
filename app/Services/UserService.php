@@ -2,21 +2,31 @@
 
 namespace App\Services;
 
-use App\Models\user\User;
-use Illuminate\Support\Str;
-use App\Models\user\UserOtp;
+use App\Models\User;
+use App\Models\Admin;
+use App\Models\Agent;
+use App\Enums\UserType;
+use App\Models\UserOtp;
+use App\Models\Customer;
+use App\traits\AdminTrait;
+use App\traits\AgentTrait;
+use App\traits\CustomerTrait;
+use App\Exceptions\CustomException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
+    use CustomerTrait, AdminTrait, AgentTrait;
+
+    public $user;
     public function __construct()
     {
+        if(Auth::check()){
+            $this->user = Auth::user();
+        }
     }
 
-    /**
-     * @return App\Models\UserOtp
-     */
+
     public function checkAndGetOtp($name, $code, $user_id)
     {
         return UserOtp::where('user_id', $user_id)
@@ -24,56 +34,82 @@ class UserService
             ->where('expires_at', '>', now())
             ->first();
     }
-    public function getUserDetails($id = null, $token = null)
+
+    public function getUserDetails($userId = null, $token = null)
     {
-        /** If the user id is not provided, Use the Authenticated User ID */
-        $user_id = $id ?? Auth::user()->id;
-        $user = User::where("id", $user_id)->first();
+        $userId ??= Auth::id();
+        $user = User::find($userId);
+
+        if(!$user){
+            throw new CustomException("Invalid User");
+        }
 
         $result = [];
         $result["id"] = $user->id;
-        $result["email"] = $user->email;
-        $result["first_name"] = $user->first_name;
-        $result["mobile_number"] = $user->mobile_number ?? null;
-        $result["last_name"] = $user->last_name;
-        $result["profile_picture"] = $user->profile_picture ? Storage::url('uploads/profile-picture/' . $user->profile_picture) : null;
-        $result['email_verified'] = $user->email_verified_at ? true : false;
-        $result['isAdmin'] = $user->isAdmin ? true : false;
+            $result["email"] = $user->email;
 
-        $token ? $result["bearer_token"] = $token : null;
+
+        // Determine profile type and add relevant details
+
+        switch ($user->profile_type) {
+            case Customer::class:
+                $result["role"] = UserType::CUSTOMER;
+                $result = array_merge($result, $this->getCustomerDetails($user->profile));
+                break;
+
+            case Agent::class:
+                $result["role"] = UserType::AGENT;
+                $result["profile"] = [
+                    'agency_name' => $user->profile->agency_name,
+                    'phone' => $user->profile->phone,
+                    // Add other Agent-specific details here
+                ];
+                break;
+
+            case Admin::class:
+                $result["role"] = UserType::ADMIN;
+                $result["profile"] = [
+                    'first_name' => $user->profile->first_name,
+                    'last_name' => $user->profile->last_name,
+                    // Add other Admin-specific details here
+                ];
+                break;
+
+            default:
+                $result["role"] = 'Unknown';
+                $result["profile"] = [];
+                break;
+        }
+
+        // Add token to the result if provided
+        if ($token) {
+            $result["bearer_token"] = $token;
+        }
+
         return $result;
     }
 
-    public function getUserAccountDetails($id = null, $user = null)
-    {
-
-    }
-    /**
-     * @param array $payload
-     * ```php
-     * <?php
-     * $payload = [
-     *  "username" => "",
-     *  "email" => "",
-     *  "first_name" => "",
-     *  "last_name" => "",
-     *  "mobile_number" => "",
-     *  "password" => "",
-     * ];
-     * ```
-     * @return User
-     */
     public function createUser($payload): User
     {
+        switch($payload['type']){
+            case UserType::CUSTOMER:
+                $model = $this->createCustomer($payload);
+                break;
+            case UserType::ADMIN:
+                $model = $this->createAdmin($payload);
+                break;
+            case UserType::AGENT:
+                $model = $this->createAgent($payload);
+                break;
+            default:
+                throw new CustomException("Invalid User Type");
+        }
+
         $user = new User();
         $user->email = $payload['email'];
-        $user->first_name = $payload['first_name'];
-        $user->last_name = $payload['last_name'];
         $user->password = $payload['password'];
-        $user->mobile_number = $payload['mobile_number'];
-        $user->created_by = $payload['created_by'] ?? null;
-        $user->isAdmin = $payload['isAdmin'] ?? false;
-        $user->save();
+
+        $model->user()->save($user);
 
         return $user;
     }
