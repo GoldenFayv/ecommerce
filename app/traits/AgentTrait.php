@@ -13,4 +13,8 @@ trait AgentTrait
         $agent->save();
         return $agent;
     }
+
+    public function updateAgent(){
+        
+    }
 }
