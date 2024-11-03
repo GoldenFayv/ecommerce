@@ -29,10 +29,11 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required|string|min:8',
             'mobile_number' => ['required', 'regex:/^\d+$/'],
-            'type' => ["required", Rule::in(UserType::getValues())]
         ]);
+        
         DB::beginTransaction();
         try {
+            $validated['type'] = UserType::CUSTOMER;
             $user = $userService->createUser($validated);
 
             $credentials = [

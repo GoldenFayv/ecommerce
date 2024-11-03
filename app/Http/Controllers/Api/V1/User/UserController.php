@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Models\user\User;
+use App\Models\User;
 use Illuminate\Support\Env;
 use Illuminate\Http\Request;
 use App\Services\UserService;
@@ -13,27 +13,27 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public $userService;
+    /** @var User $user */
+    public $user;
+
+    public function __construct(UserService $userService)  // Inject the service for better testability
+    {
+        if (Auth::check()) {
+            $this->user = Auth::user();
+            $this->userService = $userService;
+        }
+    }
 
     public function updateProfile(Request $request)
     {
-        /** @var User */
-        $user = Auth::user();
-        if (!empty($request['first_name']))
-            $user->first_name = $request['first_name'];
+        $this->user->email = $request->email;
+        $this->user->save();
 
-        if (!empty($request['last_name']))
-            $user->last_name = $request['last_name'];
+        $payload = $request->all();
+        $payload['user'] = $this->user;
 
-        if (!empty($request['mobile_number']))
-            $user->mobile_number = $request['mobile_number'];
-
-        if (!empty($request['profile_picture'])) {
-            $filename = $this->uploadFile($request['profile_picture'], 'profile_pictures');
-            $user->profile_picture = $filename;
-        }
-        $user->save();
-
-        return $this->successResponse("User Profile Updated");
+        return $this->successResponse($this->userService->updateUser($payload));
     }
     public function getProfile(UserService $userService)
     {
@@ -50,6 +50,6 @@ class UserController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg'
         ]);
         $this->sendMail(Env::get('SUPPORT_EMAIL'), 'Complaint', 'mail.complaint', []);
-       return $this->successResponse('');
+        return $this->successResponse('Sent');
     }
 }

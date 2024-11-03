@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
-use App\Exceptions\CustomException;
+use App\Enums\UserType;
+use App\Models\Customer;
 use App\Models\User\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Services\UserService;
+use Illuminate\Validation\Rule;
+use App\Exceptions\CustomException;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -34,6 +37,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'mobile_number' => ['required', 'regex:/^\d+$/'],
             'isAdmin' => 'required|boolean',
+            'user_type' => ['required', Rule::in(UserType::getValues())]
             // 'admin_role_id' => ['required_if:isAdmin,'.true, 'exists:admin_roles,id']
         ]);
         $validated['password'] =  Str::random(12);
@@ -52,11 +56,8 @@ class UserController extends Controller
     public function updateUser(Request $request, $userId)
     {
         // Validate incoming request
-        $validated = $request->validate([
+        $request->validate([
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $userId, // Allow updating if it's the same user's email
-            'first_name' => 'sometimes|string|max:255',
-            'last_name' => 'sometimes|string|max:255',
-            'isAdmin' => 'sometimes|boolean',
             'mobile_number' => 'sometimes|regex:/^\d+$/'
         ]);
 
@@ -64,47 +65,36 @@ class UserController extends Controller
         $user = User::find($userId);
 
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-
-        // Update user fields (only if present)
-        if (isset($validated['email'])) {
-            $user->email = $validated['email'];
-        }
-        if (isset($validated['first_name'])) {
-            $user->first_name = $validated['first_name'];
-        }
-        if (isset($validated['last_name'])) {
-            $user->last_name = $validated['last_name'];
-        }
-
-        if(isset($validated['isAdmin'])){
-            $user->isAdmin = $validated['isAdmin'];
-        }
-        if(isset($validated['mobile_number'])){
-            $user->mobile_number = $validated['mobile_number'];
+            return $this->failureResponse('User not found');
         }
 
         // Save updated user data
+        $user->email = $request->email;
         $user->save();
 
-        // Optionally send email to notify user about account update
-        $this->sendMail($user->email, "Account Update", 'mails.account_update', [
-            'name' => $user->first_name,
-            'password' => $validated['password']
-        ]);
+        if ($user->isDirty('email')) {
+            // Optionally send email to notify user about account update
+            $this->sendMail($user->email, "Account Update", 'mails.account_update', [
+                'name' => $user->first_name,
+                // 'password' => $validated['password']
+            ]);
+        }
 
-        return $this->successResponse("Updated");
+        $payload = $request->all();
+        $payload['user'] = $user;
+
+        return $this->successResponse($this->userService->updateUser($payload));
     }
 
     public function listUsers()
     {
-        $users = User::where('isAdmin', false)->get();
+        $users = User::where('profile_type', Customer::class)->get();
 
         return $users->map(fn($user) => $this->userService->getUserDetails($user->id));
     }
 
-    public function deleteUser($userId){
+    public function deleteUser($userId)
+    {
         $user = User::find($userId);
         if (!$user) {
             throw new CustomException('User not found');

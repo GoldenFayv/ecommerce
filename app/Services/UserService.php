@@ -113,6 +113,24 @@ class UserService
 
         return $user;
     }
+    public function updateUser($payload)
+    {
+        switch($payload['user']['profile_type']){
+            case Customer::class:
+                return $this->updateCustomer($payload);
+                // break;
+            case Admin::class:
+                return $this->updateAdmin($payload);
+                // break;
+            case Agent::class:
+                return $this->updateAgent($payload);
+                // break;
+            default:
+                throw new CustomException("Invalid User Type");
+        }
+
+        // return $user;
+    }
 
     public function creditAccount($user_id, $amount, $payment_method, $admin_id, $note)
     {

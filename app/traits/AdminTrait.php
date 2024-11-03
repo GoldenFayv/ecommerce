@@ -14,4 +14,8 @@ trait AdminTrait
 
         return $customer;
     }
+
+    public function updateAdmin(){
+        
+    }
 }
