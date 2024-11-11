@@ -32,7 +32,7 @@ function generateReference($length = 25)
     return $reference;
 }
 
-function userShipperCode()
+function customerShipperCode()
 {
     $timestamp = Carbon::now()->format('YmdHis');
     $randowm = mt_rand(199911, 999999);

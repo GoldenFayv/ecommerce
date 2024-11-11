@@ -2,26 +2,22 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\NotAdmin;
-use Carbon\Carbon;
-use App\Enums\Couriers;
+use App\Models\Customer;
 use App\Enums\AddressType;
-use App\Enums\DocumentType;
-use App\Enums\ShippingMode;
-use App\Enums\PaymentMethod;
-use App\Enums\PriorityLevel;
-use App\Enums\ShippingMethod;
 use Illuminate\Validation\Rule;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Http\FormRequest;
 
 class ShipmentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
+        // Allows all authenticated users to proceed with the request
         return true;
     }
 
@@ -32,65 +28,60 @@ class ShipmentRequest extends FormRequest
      */
     public function rules(): array
     {
-        $user = Auth::user();
+        $user = Auth::user(); // Retrieves the currently authenticated user
 
-        return [
-            // 'shipment_date' => ['required', 'after:' . Carbon::now()->addWeek(), 'date'],
-            'shipment_mode' => ['required', Rule::in(ShippingMode::getValues())],
-            'priority_level' => ['required', Rule::in(PriorityLevel::getValues())],
-            'courier_id' => ['required', 'exists:couriers,id'],
-            'user_name' => $user->isAdmin ? ['required_with:email,mobile_number'] : ['nullable'],
-            'email' => $user->isAdmin ? ['required_with:user_name', 'email'] : ['nullable', 'email'],
-            'mobile_number' => $user->isAdmin ? ['required_with:user_name', 'regex:/^\d{11,15}$/'] : ['nullable', 'regex:/^\d{11,15}$/'],
-            'user_id' => $user->isAdmin
-                ? ['required_without:user_name', new NotAdmin]  // Required for admins, validated with custom rule
-                : ['nullable'],
+        $rules = [
+            // Shipment details
+            'drop_off_point_id' => 'nullable|exists:drop_off_points,id', // Optional field; must be a valid drop-off point ID if provided
+            'cargo_description' => 'nullable|string', // Optional string field describing the cargo
+            'mod_of_shipment' => 'required|string|max:255', // Mode of shipment, required
+            'types_of_goods' => 'nullable|string|max:255', // Optional field for goods type, max 255 characters
+            'agent_code' => 'nullable|string|max:100', // Optional agent code, max 100 characters
+            'route_code' => 'nullable|string|max:50', // Optional route code, max 50 characters
+            'route_type' => 'required|in:local,international', // Defines the route as either 'local' or 'international'
+            'declaration' => 'required|string|max:255', // Required field for declaration, max 255 characters
+            'origin_zone_id' => 'required|exists:shipment_zones,id', // Required origin zone ID, must exist in shipment zones table
+            'destination_zone_id' => 'required|exists:shipment_zones,id', // Required destination zone ID, must exist in shipment zones table
 
+            // Shipment items array validation
+            'items' => 'required|array', // Requires at least one item in the shipment
+            'items.*.item_name' => 'required|string|max:255', // Each item requires a name with a max length of 255
+            'items.*.quantity' => 'required|integer|min:1', // Quantity must be an integer and at least 1
+            'items.*.weight' => 'required|numeric|min:0', // Weight must be a non-negative number
+            'items.*.length' => 'nullable|numeric|min:0', // Optional length, non-negative if provided
+            'items.*.width' => 'nullable|numeric|min:0', // Optional width, non-negative if provided
+            'items.*.height' => 'nullable|numeric|min:0', // Optional height, non-negative if provided
+            'items.*.remarks' => 'nullable|string|max:255', // Optional remarks, max 255 characters
+            'items.*.declared_value' => 'nullable|numeric|min:0', // Optional declared value, non-negative if provided
 
+            // Documents array validation
+            'documents' => 'sometimes|array', // Documents array, optional
+            'documents.*.document_type' => 'required|string|max:255', // Document type is required for each document
+            'documents.*.file_path' => 'required|string|max:255', // File path is required for each document
 
-            'package_description' => 'required',
-            'number_of_packages' => 'required|numeric',
-            'weight' => 'required|numeric',
-            'length' => 'nullable|numeric',
-            'width' => 'nullable|numeric',
-            'height' => 'nullable|numeric',
-            'shipment_value' => ['required'],
-            'insurance' => 'nullable|boolean',
-            'shipment_content' => 'nullable',
-            'fragile' => 'boolean|required',
-            'hazardous' => 'required|boolean',
-
-            'addresses' => 'required|array',
-            'addresses.*.type' => ['required', Rule::in(AddressType::getValues())], // differentiates origin and destination
-            'addresses.*.name' => 'required',
-            'addresses.*.email' => 'required|email',
-            'addresses.*.mobile_number' => ['required', 'regex:/^\d+$/'],
-            'addresses.*.preferred_datetime' => ['nullable', 'date'],
-            'addresses.*.special_instructions' => 'nullable',
-            'addresses.*.country' => 'required',
-            'addresses.*.state' => 'required',
-            'addresses.*.lga' => 'nullable',
-            'addresses.*.city' => 'required',
-            'addresses.*.street_address' => 'required',
-            'addresses.*.postal_code' => 'nullable',
-
-            'shipping_method' => ['required', Rule::in(ShippingMethod::getValues())],
-
-            'billing' => ['required'],
-            'billing.method' => ['required', Rule::in(PaymentMethod::getValues())],
-            // 'billing.country' => ['required'],
-            // 'billing.state' => ['required'],
-            // 'billing.lga' => ['required'],
-            // 'billing.street_address' => ['required'],
-            'billing.billing_address' => "required",
-            'billing.coupon' => ['nullable'],
-
-            'international' => ['boolean', 'nullable'],
-            'document_type' => ['required_if:international,true', Rule::in(DocumentType::getValues())],
-            'files' => ['required_if:international,true', 'array'],
-            'files.*' => ['required', 'file']
-
-
+            // Addresses
+            'origin_address_id' => 'required_without:addresses|exists:addresses,id', // Required if 'addresses' array is not provided
+            'destination_address_id' => 'required_without:addresses|exists:addresses,id', // Required if 'addresses' array is not provided
+            'addresses' => 'sometimes|required_without:origin_address_id,destination_address_id|array', // Requires addresses array if specific address IDs are absent
+            'addresses.*.type' => ['required', Rule::in(AddressType::getValues())], // Each address must specify type (origin or destination)
+            'addresses.*.name' => ['nullable', 'required_if:addresses.*.type,'. AddressType::DESTINATION], // Name is required if address is destination
+            'addresses.*.email' => ['nullable', 'required_if:addresses.*.type,'. AddressType::DESTINATION, 'email'], // Email is required for destination addresses
+            'addresses.*.phone' => ['required', 'regex:/^\d+$/', 'required_if:addresses.*.type,'. AddressType::DESTINATION], // Phone is required, digits only, for destination
+            'addresses.*.country' => 'required', // Country is required for all addresses
+            'addresses.*.state' => 'required', // State is required for all addresses
+            'addresses.*.lga' => 'sometimes', // Local Government Area, optional
+            'addresses.*.city' => 'required', // City is required for all addresses
+            'addresses.*.street' => 'required', // Street is required for all addresses
+            'addresses.*.latitude' => 'sometimes|numeric', // Latitude is optional, must be numeric if provided
+            'addresses.*.longitude' => 'sometimes|numeric', // Longitude is optional, must be numeric if provided
+            'addresses.*.postal_code' => 'nullable', // Postal code, optional
         ];
+
+        // Conditional validation for customer_id if the user is not a customer
+        if ($user->profile_type !== Customer::class) {
+            $rules['customer_id'] = 'required|exists:customers,id'; // customer_id is required if user is not a customer
+        }
+
+        return $rules;
     }
 }

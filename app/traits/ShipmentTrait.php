@@ -11,50 +11,54 @@ use App\Models\Package;
 use App\Models\Discount;
 use App\Models\Shipment;
 use App\Enums\AddressType;
-use App\Exceptions\CustomException;
+use App\Models\ShipmentOrder;
 use App\Models\CustomsDocument;
+use App\Exceptions\CustomException;
 
 trait ShipmentTrait
 {
-    public function getshipmentDetails(Shipment $shipment)
+    public function getshipmentOrderDetails(ShipmentOrder $shipmentOrder)
     {
-        $courier = Courier::find($shipment->courier_id);
+        // $courier = Courier::find($shipmentOrder->courier_id);
 
-        $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
+        // $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
 
-        $package = $this->getPackageDetails($shipment->id);
         $shipmentData = [
-            'id' => $shipment->id,
-            'status' => $shipment->status,
-            'shipment_reference' => $shipment->shipment_reference,
-            'shipment_date' => $shipment->created_at->format('Y-m-d'),
-            'mode_of_shipment' => $shipment->mode_of_shipment,
-            'priority_level' => $shipment->priority_level,
-            'cargo_description' => $shipment->cargo_description,
-            'carrier' => $shipment->carrier,
-            'courier' => $shipment->courier->name,
-            'shipping_method' => $shipment->shipping_method,
-            'tracking_service' => $shipment->tracking_service,
-            'signature_required' => $shipment->signature_required,
-            'user_id' => $shipment->user_id,
-            'user' => $shipment->user_name ?? $shipment->user->name,
-            'email' => $shipment->email ?? $shipment->user->email,
-            'mobile_number' => $shipment->mobile_number ?? $shipment->user->mobile_number,
+            'order_no' => $shipmentOrder->order_no,
+            'origin_address' => $shipmentOrder->originAddress,
+            'destination_address' => $shipmentOrder->destinationAddress,
+            'drop_off_point' => optional($shipmentOrder->dropOffPoint)->name,
+            'cargo_description' => $shipmentOrder->cargo_description,
+            'mod_of_shipment' => $shipmentOrder->mod_of_shipment,
+            'types_of_goods' => $shipmentOrder->types_of_goods,
+            'agent_code' => $shipmentOrder->agent_code,
+            'status' => $shipmentOrder->status,
+            'verified' => $shipmentOrder->verified,
+            'total_weight' => $shipmentOrder->total_weight,
+            'route_code' => $shipmentOrder->route_code,
+            'route_type' => $shipmentOrder->route_type,
+            'shipping_code' => $shipmentOrder->shipping_code,
+            'estimated_cost' => $shipmentOrder->estimated_cost,
+            'total_declared_value' => $shipmentOrder->total_declared_value,
+            'declaration' => $shipmentOrder->declaration,
+            'origin_zone' => $shipmentOrder->originZone,
+            'destination_zone' => $shipmentOrder->destinationZone,
+            'chargeable_weight' => $shipmentOrder->chargeable_weight,
+            'volumetric_weight' => $shipmentOrder->volumetric_weight,
 
-            
-            'package' => $package,
+            // 'package' => $package,
 
-            'billing' => $this->getBillingDetails($shipment->id),
+            // 'billing' => $this->getBillingDetails($shipment->id),
 
-            'origin_address' => $this->getAddressDetails($shipment->id, AddressType::ORIGIN()),
+            // 'origin_address' => $this->getAddressDetails($shipment->id, AddressType::ORIGIN()),
 
-            'destination_address' => $this->getAddressDetails($shipment->id, AddressType::DESTINATION()),
+            // 'destination_address' => $this->getAddressDetails($shipment->id, AddressType::DESTINATION()),
 
-            'custom_documents' => $this->getCustomDocuments($shipment->id) ?? null,
+            // 'custom_documents' => $this->getCustomDocuments($shipment->id) ?? null,
 
-            'estimatedDeliveryDate' => $estimatedDeliveryDate,
+            // 'estimatedDeliveryDate' => $estimatedDeliveryDate,
 
-            'total_cost' => $this->calculateTotalCost($package)
+            // 'total_cost' => $this->calculateTotalCost($package)
         ];
 
         return $shipmentData;

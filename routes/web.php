@@ -48,9 +48,7 @@ Route::get('/logs/{action?}', function ($action = null) {
 // });
 
 Route::get('db/update/demo', function () {
-    DB::statement("ALTER TABLE `users` ADD COLUMN `mobile_number` VARCHAR(255)");
-    DB::statement("ALTER TABLE `shipments` CHANGE `user_id` `user_id` bigint unsigned UNSIGNED DEFAULT NULL ;");
-    DB::stament("ALTER TABLE `shipments` ADD COLUMN `user_name` VARCHAR(255);");
-    DB::stament("ALTER TABLE `shipments` ADD COLUMN `email` VARCHAR(255);");
-    DB::stament("ALTER TABLE `shipments` ADD COLUMN `mobile_number` VARCHAR(255);");
+    DB::statement("ALTER TABLE `customers` ADD COLUMN `shipper_code` VARCHAR(255) NOT NULL");
+    DB::statement("ALTER TABLE `customers` ADD COLUMN `address` VARCHAR(255);");
 });
+

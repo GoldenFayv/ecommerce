@@ -4,7 +4,7 @@ namespace App\Observers;
 
 use App\Models\Shipment;
 
-class ShipmentObserver
+class ShipmentOrderObserver
 {
     /**
      * Handle the Shipment "created" event.
@@ -19,7 +19,7 @@ class ShipmentObserver
      */
     public function creating(Shipment $shipment): void
     {
-        $shipment->shipment_reference = generateReference();
+        $shipment->order_no = generateReference();
     }
 
     /**

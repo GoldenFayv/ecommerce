@@ -9,13 +9,15 @@ trait AdminTrait
 {
     public function createAdmin($payload)
     {
-        $customer = new Admin();
-        $customer->save();
+        $admin = new Admin();
+        $admin->first_name = $payload['first_name'];
+        $admin->last_name = $payload['last_name'];
+        $admin->save();
 
-        return $customer;
+        return $admin;
     }
 
     public function updateAdmin(){
-        
+
     }
 }

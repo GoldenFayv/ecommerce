@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('couriers', function (Blueprint $table) {
+        Schema::create('drop_off_points', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('max_delivery_days'); // number of days for delivery
-            $table->time('cutoff_time')->nullable();
+            $table->string('contact_number')->nullable();
+            $table->string('status', 100)->nullable();
             $table->timestamps();
+            $table->foreignId('address_id')->constrained()->onDelete('cascade');
+            $table->string('location_code', 100)->charset('ascii')->collation('ascii_general_ci')->nullable();
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('couriers');
+        Schema::dropIfExists('drop_off_points');
     }
 };

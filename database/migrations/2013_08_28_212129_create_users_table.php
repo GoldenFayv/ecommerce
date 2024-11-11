@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('firstname');
+            $table->string('lastname');
+            $table->string('shipping_code');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->integer('is_role')->default(1);
             $table->morphs('profile');
             $table->timestamps();
         });

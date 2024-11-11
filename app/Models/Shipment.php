@@ -46,28 +46,8 @@ class Shipment extends Model
         return $this->hasOne(Address::class, 'shipment_id')->where('type', AddressType::DESTINATION());
     }
 
-    public function package()
-    {
-        return $this->hasOne(Package::class, 'shipment_id');
-    }
-
-    public function billing()
-    {
-        return $this->hasOne(Billing::class, 'shipment_id');
-    }
-
-    public function customDocument()
-    {
-        return $this->hasOne(CustomsDocument::class, 'shipment_id');
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function courier()
-    {
-        return $this->belongsTo(Courier::class, 'courier_id');
     }
 }

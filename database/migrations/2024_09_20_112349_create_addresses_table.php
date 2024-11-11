@@ -13,22 +13,20 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            // $table->string('type');
-            $table->string('mobile_number');
-            $table->string('email');
-            $table->string('street_address');
-            $table->string('lga');
+            $table->string('name')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
+            $table->string('street');
             $table->string('city');
             $table->string('state');
-            $table->string('postal_code');
+            $table->string('state_abbr')->nullable();
             $table->string('country');
-            $table->datetime('pickup_dropoff_address')->nullable();
-            $table->datetime('preferred_datetime')->nullable();
-            $table->string('special_instructions')->nullable();
-            $table->string('type');
-            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('shipment_id')->constrained('shipments')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('country_abbr')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('type', 100)->nullable();
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

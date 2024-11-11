@@ -9,25 +9,35 @@ class Address extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'type',
         'name',
-        'mobile_number',
+        'phone',
         'email',
-        'street_address',
+        'street',
         'city',
-        'lga',
         'state',
-        'postal_code',
+        'state_abbr',
         'country',
-        'preferred_datetime',
-        'special_instructions',
-        'shipment_reference',
-        'shipment_id'
+        'country_abbr',
+        'postal_code',
+        'type',
+        'latitude',
+        'longitude',
+        'user_id',
     ];
 
-    // You can define relationships to `Shipment` here if needed
-    public function shipment()
+    /**
+     * The user associated with the address.
+     */
+    public function user()
     {
-        return $this->belongsTo(Shipment::class, 'shipment_id');
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Drop-off points associated with this address.
+     */
+    public function dropOffPoints()
+    {
+        return $this->hasMany(DropOffPoint::class, 'address_id');
     }
 }
