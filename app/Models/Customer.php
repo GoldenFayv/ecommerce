@@ -13,6 +13,9 @@ class Customer extends Model
         "first_name",
         "last_name",
         "mobile_number",
+        "address",
+        "shipper_code",
+        "user_id"
     ];
 
     public function getNameAttribute()
@@ -23,4 +26,5 @@ class Customer extends Model
     {
         return $this->morphOne(User::class, 'profile');
     }
+
 }

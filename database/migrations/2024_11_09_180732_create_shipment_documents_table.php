@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('customers', function (Blueprint $table) {
+        Schema::create('shipment_documents', function (Blueprint $table) {
             $table->id();
-            $table->string("first_name");
-            $table->string("last_name");
-            $table->string("mobile_number")->unique();
-            $table->string("address")->nullable();
-            $table->string("shipper_code")->unique();
+            $table->foreignId('shipment_order_id')->constrained('shipment_orders')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->string('document_type');
+            $table->string('file_path');
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('customers');
+        Schema::dropIfExists('shipment_documents');
     }
 };

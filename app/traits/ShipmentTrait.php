@@ -11,97 +11,77 @@ use App\Models\Package;
 use App\Models\Discount;
 use App\Models\Shipment;
 use App\Enums\AddressType;
-use App\Exceptions\CustomException;
+use App\Models\ShipmentItem;
+use App\Models\ShipmentOrder;
 use App\Models\CustomsDocument;
+use App\Exceptions\CustomException;
+use App\Models\ShipmentDocument;
 
 trait ShipmentTrait
 {
-    public function getshipmentDetails(Shipment $shipment)
+    public function getshipmentOrderDetails(ShipmentOrder $shipmentOrder)
     {
-        $courier = Courier::find($shipment->courier_id);
+        // $courier = Courier::find($shipmentOrder->courier_id);
 
-        $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
+        // $estimatedDeliveryDate = $this->calculateDeliveryDate(1, $courier->max_delivery_days, $courier->cutoff_time);
 
-        $package = $this->getPackageDetails($shipment->id);
         $shipmentData = [
-            'id' => $shipment->id,
-            'status' => $shipment->status,
-            'shipment_reference' => $shipment->shipment_reference,
-            'shipment_date' => $shipment->created_at->format('Y-m-d'),
-            'mode_of_shipment' => $shipment->mode_of_shipment,
-            'priority_level' => $shipment->priority_level,
-            'cargo_description' => $shipment->cargo_description,
-            'carrier' => $shipment->carrier,
-            'courier' => $shipment->courier->name,
-            'shipping_method' => $shipment->shipping_method,
-            'tracking_service' => $shipment->tracking_service,
-            'signature_required' => $shipment->signature_required,
-            'user_id' => $shipment->user_id,
-            'user' => $shipment->user_name ?? $shipment->user->name,
-            'email' => $shipment->email ?? $shipment->user->email,
-            'mobile_number' => $shipment->mobile_number ?? $shipment->user->mobile_number,
+            'order_no' => $shipmentOrder->order_no,
+            'drop_off_point' => optional($shipmentOrder->dropOffPoint)->name,
+            'cargo_description' => $shipmentOrder->cargo_description,
+            'mod_of_shipment' => $shipmentOrder->mod_of_shipment,
+            'types_of_goods' => $shipmentOrder->types_of_goods,
+            'agent_code' => $shipmentOrder->agent_code,
+            'status' => $shipmentOrder->status,
+            'verified' => $shipmentOrder->verified,
+            'total_weight' => $shipmentOrder->total_weight,
+            'route_code' => $shipmentOrder->route_code,
+            'route_type' => $shipmentOrder->route_type,
+            'shipping_code' => $shipmentOrder->shipping_code,
+            'estimated_cost' => $shipmentOrder->estimated_cost,
+            'total_declared_value' => $shipmentOrder->total_declared_value,
+            'declaration' => $shipmentOrder->declaration,
+            'origin_zone' => $shipmentOrder->originZone,
+            'destination_zone' => $shipmentOrder->destinationZone,
+            'chargeable_weight' => $shipmentOrder->chargeable_weight,
+            'volumetric_weight' => $shipmentOrder->volumetric_weight,
+            'shipment_items' => $this->getShipmentItems($shipmentOrder->id),
 
-            
-            'package' => $package,
+            // 'origin_address' => $this->getAddressDetails($shipmentOrder->id, AddressType::ORIGIN()),
 
-            'billing' => $this->getBillingDetails($shipment->id),
+            // 'destination_address' => $this->getAddressDetails($shipmentOrder->id, AddressType::DESTINATION()),
+            'origin_address' => $this->getAddressDetails($shipmentOrder->originAddress, AddressType::ORIGIN),
+            'destination_address' => $this->getAddressDetails($shipmentOrder->destinationAddress, AddressType::DESTINATION),
 
-            'origin_address' => $this->getAddressDetails($shipment->id, AddressType::ORIGIN()),
+            'shipment_documents' => $this->getCustomDocuments($shipmentOrder->id) ?? null,
 
-            'destination_address' => $this->getAddressDetails($shipment->id, AddressType::DESTINATION()),
+            // 'estimatedDeliveryDate' => $estimatedDeliveryDate,
 
-            'custom_documents' => $this->getCustomDocuments($shipment->id) ?? null,
-
-            'estimatedDeliveryDate' => $estimatedDeliveryDate,
-
-            'total_cost' => $this->calculateTotalCost($package)
+            // 'total_cost' => $this->calculateTotalCost($package)
         ];
 
         return $shipmentData;
     }
 
-    private function getPackageDetails(int $shipmentId)
+    private function getShipmentItems($shipmentOrderId)
     {
-        $package = Package::where('shipment_id', $shipmentId)->first();
-
-        if (!$package) {
-            throw new CustomException('Package not found');
-        }
-
-        return [
-            'package_id' => $package->id,
-            'number_of_packages' => $package->number_of_packages,
-            'weight' => $package->weight,
-            'length' => $package->length,
-            'width' => $package->width,
-            'height' => $package->height,
-            'shipment_value' => $package->shipment_value,
-            'insurance' => $package->insurance,
-            'shipment_contents' => $package->shipment_contents,
-            'fragile' => $package->fragile,
-            'hazardous_materials' => $package->hazardous_materials,
-            'package_description' => $package->package_description
-        ];
+        return ShipmentItem::where('shipment_order_id', $shipmentOrderId)->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'item_name' => $item->item_name,
+                'quantity' => $item->quantity,
+                'weight' => $item->weight,
+                'length' => $item->length,
+                'width' => $item->width,
+                'height' => $item->height,
+                'remarks' => $item->remarks,
+                'declared_value' => $item->declared_value,
+            ];
+        });
     }
 
-    private function getBillingDetails(int $shipmentId)
+    private function getAddressDetails(Address $address, $type)
     {
-        $billing = Billing::where('shipment_id', $shipmentId)->first();
-
-        if (!$billing) {
-            throw new CustomException('Billing not found');
-        }
-
-        return [
-            'payment_method' => $billing->payment_method,
-            'billing_address' => $billing->billing_address,
-            'coupon_code' => $billing->coupon_code,
-        ];
-    }
-
-    private function getAddressDetails(int $shipmentId, $type)
-    {
-        $address = Address::where(['shipment_id' => $shipmentId, 'type' => $type])->first();
 
         if (!$address) {
             throw new CustomException('Address not found');
@@ -112,29 +92,24 @@ trait ShipmentTrait
             'name' => $address->name,
             'mobile_number' => $address->mobile_number,
             'email' => $address->email,
-            'street_address' => $address->street_address,
+            'street' => $address->street,
             'city' => $address->city,
             'lga' => $address->lga,
             'state' => $address->state,
             'postal_code' => $address->postal_code,
             'country' => $address->country,
-            'preferred_datetime' => $address->preferred_datetime,
-            'special_instructions' => $address->special_instructions,
         ];
     }
 
-    private function getCustomDocuments(int $shipmentId)
+    private function getCustomDocuments(int $shipmentOrderId)
     {
-        $customDoument = CustomsDocument::where('shipment_id', $shipmentId)->first();
-
-        if (!$customDoument) {
-            return [];
-        }
-
-        return [
-            'document_type' => $customDoument->document_type,
-            'files' => $customDoument->files
-        ];
+        return ShipmentDocument::where('shipment_order_id', $shipmentOrderId)->get()->map(function ($document) {
+            return [
+                'id' => $document['id'],
+                'document_type' => $document['document_type'],
+                'file_path' => $document['file_path'],
+            ];
+        });
     }
 
     public function getDeliveryDays($shippingMethod, $priorityLevel)

@@ -69,6 +69,7 @@ Route::prefix('v1')->group(function () {
                 Route::patch('confirm/{shipmentId}', [ShipmentController::class, 'confirmUpdateShipment']);
 
                 Route::get('', [ShipmentController::class, 'shipments']);
+                Route::get('zone', [ShipmentController::class, 'getShipmentZone']);
             });
 
 
@@ -86,6 +87,11 @@ Route::prefix('v1')->group(function () {
                 Route::prefix('shipment')->group(function () {
                     Route::patch('approve/{shipmentId}', [AdminShipmentController::class, 'approveShipment']);
                     Route::patch('reject/{shipmentId}', [AdminShipmentController::class, 'rejectShipment']);
+
+                    Route::prefix('zone')->group(function () {
+                        Route::post('', [ShipmentController::class, 'createShipmentZone']);
+                        // Route::get('', [ShipmentController::class, 'getShipmentZone']);
+                    });
                 });
 
                 Route::prefix('config')->group(function () {

@@ -91,6 +91,7 @@ class UserService
 
     public function createUser($payload): User
     {
+        $payload['shipper_code'] = customerShipperCode();
         switch($payload['type']){
             case UserType::CUSTOMER:
                 $model = $this->createCustomer($payload);
@@ -107,8 +108,11 @@ class UserService
 
         $user = new User();
         $user->email = $payload['email'];
+        $user->firstname = $payload['first_name'];
+        $user->lastname = $payload['last_name'];
+        $user->shipping_code = $payload['shipper_code'];
+        // $user->is_role
         $user->password = $payload['password'];
-
         $model->user()->save($user);
 
         return $user;

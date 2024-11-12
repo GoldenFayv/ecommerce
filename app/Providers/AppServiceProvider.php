@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Shipment;
-use App\Observers\ShipmentObserver;
+use App\Models\Customer;
+use App\Models\ShipmentOrder;
+use App\Observers\CustomerObserver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use App\Observers\ShipmentOrderObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
-        Shipment::observe(ShipmentObserver::class);
+        ShipmentOrder::observe(ShipmentOrderObserver::class);
+        Customer::observe(CustomerObserver::class);
     }
 }

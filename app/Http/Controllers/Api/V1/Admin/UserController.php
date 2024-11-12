@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Models\Admin;
 use App\Enums\UserType;
 use App\Models\Customer;
 use App\Models\User\User;
@@ -19,15 +20,16 @@ class UserController extends Controller
     public $userService;
     public $user;
 
-    public function __construct(UserService $userService)  // Inject the service for better testability
+    public function __construct(UserService $userService)
     {
-        if (Auth::check()) {
+        $this->middleware(function ($request, $next) use ($userService) {
             $this->user = Auth::user();
-            if (!$this->user->isAdmin) {
+            if (!$this->user || $this->user->profile_type !== Admin::class) {
                 throw new CustomException("Access Denied", 403);
             }
             $this->userService = $userService;
-        }
+            return $next($request);
+        });
     }
     public function createUser(Request $request)
     {
@@ -36,12 +38,13 @@ class UserController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'mobile_number' => ['required', 'regex:/^\d+$/'],
-            'isAdmin' => 'required|boolean',
+            // 'isAdmin' => 'required|boolean',
             'user_type' => ['required', Rule::in(UserType::getValues())]
             // 'admin_role_id' => ['required_if:isAdmin,'.true, 'exists:admin_roles,id']
         ]);
         $validated['password'] =  Str::random(12);
         $validated['created_by'] = $this->user->id;
+        $validated['type'] = $request->user_type;
         $user = $this->userService->createUser(payload: $validated);
 
         $this->sendMail($user->email, "Account Creation", 'mails.account_creation', [
@@ -90,7 +93,9 @@ class UserController extends Controller
     {
         $users = User::where('profile_type', Customer::class)->get();
 
-        return $users->map(fn($user) => $this->userService->getUserDetails($user->id));
+        $result = $users->map(fn($user) => $this->userService->getUserDetails($user->id));
+
+        return $this->successResponse("", $result);
     }
 
     public function deleteUser($userId)

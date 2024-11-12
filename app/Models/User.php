@@ -11,7 +11,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory;
-    protected $fillable = ['email', 'password'];
+    protected $fillable = [
+        'email',
+        'password',
+        'firstname',
+        'lastname',
+        'shipping_code',
+        'email_verified_at',
+        'is_role',
+    ];
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
