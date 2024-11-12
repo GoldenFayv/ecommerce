@@ -62,6 +62,15 @@ class ShipmentController extends Controller
         }
     }
 
+    /**
+     * Confirms and processes a shipment based on cached validated data.
+     *
+     * This function retrieves shipment data from the cache, validates it, and processes
+     * the shipment by creating necessary records in the database. It handles addresses,
+     * shipment items, and documents, and ensures data integrity through a database transaction.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response indicating the success or failure of the shipment confirmation.
+     */
     public function confirmShipment()
     {
         $user = Auth::user();
@@ -73,7 +82,7 @@ class ShipmentController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($validatedData, $cacheKey, $user) {
+            return DB::transaction(function () use ($validatedData, $cacheKey, $user) {
 
                 if ($validatedData['addresses']) {
                     $addressIds = []; // Initialize an empty array to store the IDs
@@ -135,11 +144,11 @@ class ShipmentController extends Controller
                     'total_declared_value' => $totalDeclaredValue,
                 ]);
 
-                if($validatedData['documents']){
-                    foreach($validatedData['documents'] as $document){
+                if ($validatedData['documents']) {
+                    foreach ($validatedData['documents'] as $document) {
                         $shipmentOrder->shipmentDocuments()->create([
                             'document_type' => $document['document_type'],
-                            'file_path' => $document['file_path'],
+                            'file_path' => $document['file'],
                         ]);
                     }
                 }
@@ -156,25 +165,34 @@ class ShipmentController extends Controller
         }
     }
 
+    /**
+     * Retrieves shipments based on the provided status.
+     *
+     * @param Request $request The incoming request, containing the optional 'status' parameter.
+     * @return \Illuminate\Http\JsonResponse A JSON response with shipment details.
+     * @throws \Illuminate\Validation\ValidationException If the 'status' parameter is not valid.
+     */
     public function shipments(Request $request)
     {
+        // Validate the optional 'status' parameter against predefined ShipmentStatus values
         $request->validate([
-            'status' => ['nullable', Rule::in(ShipmentStatus::getValues())]
+            'status' => ['sometimes', Rule::in(ShipmentStatus::getValues())]
         ]);
-        logger("", [$request->status]);
 
-        // Get the shipments based on the user's role and request status
-        $shipments = Shipment::when($this->user->profile == Customer::class, function ($query) {
-            // If the user is not an admin, filter by user_id
-            return $query->where('user_id', $this->user->id);
-        })
-            ->when($this->user->isAdmin && $request->status, function ($query) use ($request) {
-                // If the user is an admin and status is provided, filter by status
-                return $query->where('status', $request->status);
+        // Retrieve shipments based on user's profile type and status
+        $shipments = ($this->user->profile == Customer::class)
+            ? ShipmentOrder::where('customer_id', $this->user->profile_id)->when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })->get()
+            : ShipmentOrder::when($request->filled('status'), function ($query) use ($request) {
+                $query->where('status', $request->status);
             })->get();
 
-        // Map through the shipments and get details
-        return $this->successResponse('Shipments', $shipments->map(fn($shipment) => $this->getshipmentOrderDetails($shipment)));
+        // Map through the shipments and retrieve details
+        return $this->successResponse(
+            'Shipments',
+            $shipments->map(fn($shipment) => $this->getShipmentOrderDetails($shipment))
+        );
     }
 
     public function cancelShipment($shipmentId)
@@ -190,7 +208,6 @@ class ShipmentController extends Controller
 
         return $this->successResponse('Cancelled');
     }
-
 
     public function update_shipment(ShipmentRequest $shipmentRequest, $shipmentId)
     {

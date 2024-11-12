@@ -57,16 +57,39 @@ class ShipmentRequest extends FormRequest
             // Documents array validation
             'documents' => 'sometimes|array', // Documents array, optional
             'documents.*.document_type' => 'required|string|max:255', // Document type is required for each document
-            'documents.*.file_path' => 'required|string|max:255', // File path is required for each document
+            'documents.*.file' => 'required|string|max:255', // File path is required for each document
 
             // Addresses
-            'origin_address_id' => 'required_without:addresses|exists:addresses,id', // Required if 'addresses' array is not provided
-            'destination_address_id' => 'required_without:addresses|exists:addresses,id', // Required if 'addresses' array is not provided
+            'origin_address_id' => [
+                'exists:addresses,id',
+                function ($attribute, $value, $fail) {
+                    if ($value && request()->input('addresses')) {
+                        foreach (request()->input('addresses') as $address) {
+                            if (isset($address['type']) && $address['type'] === AddressType::ORIGIN) {
+                                $fail('The origin_address_id and an address of type origin cannot both be provided.');
+                            }
+                        }
+                    }
+                },
+            ], // Required if 'addresses' array is not provided
+            'destination_address_id' => [
+                'required_without:addresses',
+                'exists:addresses,id',
+                function ($attribute, $value, $fail) {
+                    if ($value && request()->input('addresses')) {
+                        foreach (request()->input('addresses') as $address) {
+                            if (isset($address['type']) && $address['type'] === AddressType::DESTINATION) {
+                                $fail('The destination_address_id and an address of type destination cannot both be provided.');
+                            }
+                        }
+                    }
+                },
+            ], // Required if 'addresses' array is not provided
             'addresses' => 'sometimes|required_without:origin_address_id,destination_address_id|array', // Requires addresses array if specific address IDs are absent
             'addresses.*.type' => ['required', Rule::in(AddressType::getValues())], // Each address must specify type (origin or destination)
-            'addresses.*.name' => ['nullable', 'required_if:addresses.*.type,'. AddressType::DESTINATION], // Name is required if address is destination
-            'addresses.*.email' => ['nullable', 'required_if:addresses.*.type,'. AddressType::DESTINATION, 'email'], // Email is required for destination addresses
-            'addresses.*.phone' => ['required', 'regex:/^\d+$/', 'required_if:addresses.*.type,'. AddressType::DESTINATION], // Phone is required, digits only, for destination
+            'addresses.*.name' => ['nullable', 'required_if:addresses.*.type,' . AddressType::DESTINATION], // Name is required if address is destination
+            'addresses.*.email' => ['nullable', 'required_if:addresses.*.type,' . AddressType::DESTINATION, 'email'], // Email is required for destination addresses
+            'addresses.*.phone' => ['required', 'regex:/^\d+$/', 'required_if:addresses.*.type,' . AddressType::DESTINATION], // Phone is required, digits only, for destination
             'addresses.*.country' => 'required', // Country is required for all addresses
             'addresses.*.state' => 'required', // State is required for all addresses
             'addresses.*.lga' => 'sometimes', // Local Government Area, optional
