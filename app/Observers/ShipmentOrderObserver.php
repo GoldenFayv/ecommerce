@@ -2,14 +2,14 @@
 
 namespace App\Observers;
 
-use App\Models\Shipment;
+use App\Models\ShipmentOrder;
 
 class ShipmentOrderObserver
 {
     /**
      * Handle the Shipment "created" event.
      */
-    public function created(Shipment $shipment): void
+    public function created(ShipmentOrder $shipmentOrder): void
     {
         //
     }
@@ -17,15 +17,15 @@ class ShipmentOrderObserver
     /**
      * Handle the Shipment "creating" event.
      */
-    public function creating(Shipment $shipment): void
+    public function creating(ShipmentOrder $shipmentOrder): void
     {
-        $shipment->order_no = generateReference();
+        $shipmentOrder->order_no = generateReference();
     }
 
     /**
      * Handle the Shipment "updated" event.
      */
-    public function updated(Shipment $shipment): void
+    public function updated(ShipmentOrder $shipmentOrder): void
     {
         //
     }
@@ -33,7 +33,7 @@ class ShipmentOrderObserver
     /**
      * Handle the Shipment "deleted" event.
      */
-    public function deleted(Shipment $shipment): void
+    public function deleted(ShipmentOrder $shipmentOrder): void
     {
         //
     }
@@ -41,7 +41,7 @@ class ShipmentOrderObserver
     /**
      * Handle the Shipment "restored" event.
      */
-    public function restored(Shipment $shipment): void
+    public function restored(ShipmentOrder $shipmentOrder): void
     {
         //
     }
@@ -49,7 +49,7 @@ class ShipmentOrderObserver
     /**
      * Handle the Shipment "force deleted" event.
      */
-    public function forceDeleted(Shipment $shipment): void
+    public function forceDeleted(ShipmentOrder $shipmentOrder): void
     {
         //
     }

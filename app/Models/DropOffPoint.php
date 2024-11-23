@@ -17,6 +17,7 @@ class DropOffPoint extends Model
         'location_code',
     ];
 
+
     /**
      * Address associated with this drop-off point.
      */

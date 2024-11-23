@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\Auth;
 
 trait CustomerTrait
 {
+    /**
+     * Creates a new customer record in the database.
+     *
+     * @param array $payload An associative array containing customer details.
+     *                       - 'first_name': string, the first name of the customer.
+     *                       - 'last_name': string, the last name of the customer.
+     *                       - 'mobile_number': string, the mobile number of the customer.
+     *                       - 'shipper_code': string, the shipper code associated with the customer.
+     * @return Customer The newly created Customer object.
+     */
     public function createCustomer($payload)
     {
         $customer = new Customer();
@@ -21,6 +31,13 @@ trait CustomerTrait
         return $customer;
     }
 
+    /**
+     * Retrieves the details of a customer.
+     *
+     * @param Customer|null $customer An optional Customer object. If provided, it will be used to get the details.
+     * @param int|null $customerId An optional customer ID. If $customer is not provided, this ID will be used to find the customer.
+     * @return array An associative array containing the customer's first name, last name, and mobile number.
+     */
     public function getCustomerDetails(Customer $customer = null, $customerId = null){
 
         $customer ??= Customer::findOrFail($customerId);
@@ -51,4 +68,11 @@ trait CustomerTrait
 
         return "User Profile Updated";
     }
+
+    public function getCustomerAddresses(Customer $customer = null, int $customerId = null){
+        $customer ??= Customer::findOrFail($customerId);
+        return $customer->addresses;
+    }
+
+    
 }

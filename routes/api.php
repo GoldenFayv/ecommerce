@@ -54,6 +54,7 @@ Route::prefix('v1')->group(function () {
         // User Routes
         Route::group([], function () {
             Route::get('profile', [ApiV1UserController::class, 'getProfile'])->name('api.user.profile');
+            Route::get('addresses', [ApiV1UserController::class, 'getAddresses'])->name('api.user.address');
             // ->middleware('requires_recaptcha');
 
             Route::prefix('shipment')->group(function () {
@@ -70,6 +71,7 @@ Route::prefix('v1')->group(function () {
 
                 Route::get('', [ShipmentController::class, 'shipments']);
                 Route::get('zone', [ShipmentController::class, 'getShipmentZone']);
+                Route::get('drop-off-points', [ShipmentController::class, 'dropOffPoints']);
             });
 
 
