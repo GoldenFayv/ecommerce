@@ -48,7 +48,7 @@ Route::get('/logs/{action?}', function ($action = null) {
 // });
 
 Route::get('db/update/demo', function () {
-    DB::statement("ALTER TABLE `customers` ADD COLUMN `shipper_code` VARCHAR(255) NOT NULL");
-    DB::statement("ALTER TABLE `customers` ADD COLUMN `address` VARCHAR(255);");
+    DB::statement("ALTER TABLE `addresses` CHANGE `user_id` `customer_id` bigint unsigned UNSIGNED DEFAULT NULL;");
+    DB::statement("ALTER TABLE `addresses` ADD FOREIGN KEY (`customer_id`) REFERENCES `customers`(`id`) ON UPDATE CASCADE ON DELETE CASCADE;");
 });
 

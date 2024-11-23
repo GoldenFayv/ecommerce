@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\User;
 
-use App\Models\ShipmentOrder;
 use Throwable;
 use App\Models\Admin;
 use App\Models\Config;
@@ -11,9 +10,12 @@ use App\Models\Courier;
 use App\Models\Customer;
 use App\Models\Shipment;
 use App\Enums\AddressType;
+use App\Models\DropOffPoint;
+use App\Models\ShipmentItem;
 use App\Models\ShipmentZone;
 use Illuminate\Http\Request;
 use App\Enums\ShipmentStatus;
+use App\Models\ShipmentOrder;
 use App\traits\ShipmentTrait;
 use App\Enums\FileUploadPaths;
 use Illuminate\Validation\Rule;
@@ -23,7 +25,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\ShipmentRequest;
-use App\Models\ShipmentItem;
 
 class ShipmentController extends Controller
 {
@@ -74,6 +75,7 @@ class ShipmentController extends Controller
     public function confirmShipment()
     {
         $user = Auth::user();
+        logger("Profile", [$user->profile_type == Customer::class]);
         $cacheKey = "shipment_{$user->id}";
         $validatedData = Cache::get($cacheKey);
 
@@ -101,7 +103,7 @@ class ShipmentController extends Controller
                             'postal_code' => $address['postal_code'],
                             'latitude' => $address['latitude'] ?? null,
                             'longitude' => $address['longitude'] ?? null,
-                            'user_id' => $user->id
+                            'customer_id' => $user->profile_type == Customer::class ? $user->profile_id : $validatedData['user_id']
                         ]);
 
                         // Store the ID based on type (e.g., 'origin' or 'destination')
@@ -363,5 +365,14 @@ class ShipmentController extends Controller
         ShipmentZone::create($request->all());
 
         return $this->successResponse('Zone Created');
+    }
+
+    public function dropOffPoints()
+    {
+        $dropOffPoints = DropOffPoint::when($this->user->profile_type == Customer::class, function($query){
+            $query->where('status', 'Active');
+        })->get()->map(fn($dropOffPoint) => $this->getCustomerDropOffPoint( $dropOffPoint ));
+
+        return $this->successResponse("Drop Off Points", $dropOffPoints);
     }
 }

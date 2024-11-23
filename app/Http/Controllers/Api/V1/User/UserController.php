@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\User;
 
 use App\Models\User;
+use App\traits\CustomerTrait;
 use Illuminate\Support\Env;
 use Illuminate\Http\Request;
 use App\Services\UserService;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    use CustomerTrait;
     public $userService;
     /** @var User $user */
     public $user;
@@ -35,6 +37,7 @@ class UserController extends Controller
 
         return $this->successResponse($this->userService->updateUser($payload));
     }
+
     public function getProfile(UserService $userService)
     {
         $userDetails = $userService->getUserDetails();
@@ -51,5 +54,14 @@ class UserController extends Controller
         ]);
         $this->sendMail(Env::get('SUPPORT_EMAIL'), 'Complaint', 'mail.complaint', []);
         return $this->successResponse('Sent');
+    }
+
+    public function getAddresses()
+    {
+        return $this->successResponse("Addresses", $this->getCustomerAddresses(auth()->user()->profile));
+    }
+
+    public function getDropOffPoints(){
+        
     }
 }

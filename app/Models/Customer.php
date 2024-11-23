@@ -27,4 +27,8 @@ class Customer extends Model
         return $this->morphOne(User::class, 'profile');
     }
 
+    public function addresses(){
+        return $this->hasMany(Address::class, 'customer_id');
+    }
+
 }

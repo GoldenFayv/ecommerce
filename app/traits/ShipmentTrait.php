@@ -15,6 +15,7 @@ use App\Models\ShipmentItem;
 use App\Models\ShipmentOrder;
 use App\Models\CustomsDocument;
 use App\Exceptions\CustomException;
+use App\Models\DropOffPoint;
 use App\Models\ShipmentDocument;
 
 trait ShipmentTrait
@@ -184,5 +185,15 @@ trait ShipmentTrait
         }
 
         return $date;
+    }
+
+    public function getCustomerDropOffPoint(DropOffPoint $dropOffPoint = null, int $dropOffPointId = null){
+        $dropOffPoint ??= DropOffPoint::findOrFail($dropOffPointId);
+        return [
+            'name' => $dropOffPoint->name,
+            'contact_number' => $dropOffPoint->contact_number,
+            'location_code' => $dropOffPoint->location_code,
+            'status' => $dropOffPoint->status
+        ];
     }
 }

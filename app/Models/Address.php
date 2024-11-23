@@ -22,15 +22,15 @@ class Address extends Model
         'type',
         'latitude',
         'longitude',
-        'user_id',
+        'customer_id',
     ];
 
     /**
      * The user associated with the address.
      */
-    public function user()
+    public function customer()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     /**
